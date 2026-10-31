@@ -1,5 +1,6 @@
 import React from "react";
 import type { ClaimCheck } from "../../shared/types/index.js";
+import { CheckIcon, AlertTriangleIcon, ClockIcon, ExternalLinkIcon, FileTextIcon } from "./Icons.js";
 
 interface ClaimCheckerPanelProps {
   claimChecks: ClaimCheck[];
@@ -11,12 +12,10 @@ export const ClaimCheckerPanel: React.FC<ClaimCheckerPanelProps> = ({ claimCheck
   return (
     <section className="claim-panel" aria-label="Management Guidance Auditor">
       <div className="section-heading">
-        <div>
-          <p className="eyebrow">STAGE 04C · MANAGEMENT CLAIM AUDITOR</p>
-          <h2>Executive Guidance vs Reported Result</h2>
-        </div>
+        <p className="eyebrow">Stage 04 · Management Claim Auditor</p>
+        <h2>Executive Guidance vs Reported Result</h2>
         <p>
-          Audits past earnings call guidance against subsequent 10-Q / 10-K reported outcomes with deterministic variance analysis.
+          Audits past earnings call guidance against subsequent 10-Q and 10-K reported outcomes with deterministic variance analysis.
         </p>
       </div>
 
@@ -25,98 +24,87 @@ export const ClaimCheckerPanel: React.FC<ClaimCheckerPanelProps> = ({ claimCheck
           const status = claim.evidenceStatus || (claim.claimId === "NVDA-CLAIM-002" ? "PARTIALLY_CORROBORATED" : "VERIFIED");
           const statusLabel =
             status === "VERIFIED"
-              ? "✓ VERIFIED OUTCOME"
+              ? "Verified Outcome"
               : status === "PARTIALLY_CORROBORATED"
-              ? "🟡 PARTIALLY CORROBORATED"
+              ? "Partially Corroborated"
               : status === "PENDING"
-              ? "⏳ PENDING REPORTED OUTCOME"
+              ? "Pending Reported Outcome"
               : status === "CONTRADICTED"
-              ? "⚠ CONTRADICTED BY 10-K"
-              : "NOT DIRECTLY VERIFIED";
+              ? "Contradicted by 10-K"
+              : "Not Directly Verified";
 
-          const statusColor =
+          const statusClass =
             status === "VERIFIED"
-              ? "var(--accent-emerald)"
+              ? "pass"
               : status === "PARTIALLY_CORROBORATED"
-              ? "var(--accent-amber)"
+              ? "warning"
               : status === "CONTRADICTED"
-              ? "var(--accent-rose)"
-              : "var(--accent-cyan)";
-
-          const statusBg =
-            status === "VERIFIED"
-              ? "rgba(52, 211, 153, 0.12)"
-              : status === "PARTIALLY_CORROBORATED"
-              ? "rgba(245, 158, 11, 0.12)"
-              : status === "CONTRADICTED"
-              ? "rgba(239, 68, 68, 0.12)"
-              : "rgba(56, 189, 248, 0.12)";
-
-          const statusBorder =
-            status === "VERIFIED"
-              ? "rgba(52, 211, 153, 0.35)"
-              : status === "PARTIALLY_CORROBORATED"
-              ? "rgba(245, 158, 11, 0.35)"
-              : status === "CONTRADICTED"
-              ? "rgba(239, 68, 68, 0.35)"
-              : "rgba(56, 189, 248, 0.35)";
+              ? "critical"
+              : "low";
 
           return (
-            <div className="claim-card-item" key={claim.claimId} style={{ padding: "20px 24px" }}>
+            <div className="claim-card-item" key={claim.claimId}>
               {/* Evidence Architecture Top Header */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px", marginBottom: "16px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <span className="claim-topic-badge">{claim.topic}</span>
-                  <span
-                    style={{
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "11px",
-                      fontWeight: 800,
-                      color: statusColor,
-                      background: statusBg,
-                      border: `1px solid ${statusBorder}`,
-                      padding: "3px 10px",
-                      borderRadius: "9999px",
-                      letterSpacing: "0.04em",
-                    }}
-                  >
-                    {statusLabel}
+              <div className="claim-header-strip">
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                  <span className="claim-topic">{claim.topic}</span>
+                  <span className={`finding-status-tag ${statusClass}`}>
+                    {status === "VERIFIED" ? (
+                      <CheckIcon size={12} />
+                    ) : status === "PENDING" ? (
+                      <ClockIcon size={12} />
+                    ) : (
+                      <AlertTriangleIcon size={12} />
+                    )}
+                    <span>{statusLabel}</span>
                   </span>
                 </div>
-                <div style={{ fontSize: "11.5px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
-                  REF: {claim.claimId}
+                <div style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+                  Ref: {claim.claimId}
                 </div>
               </div>
 
-              {/* 1. SOURCE & 2. CLAIM */}
-              <div style={{ marginBottom: "14px", padding: "12px 16px", background: "rgba(15, 23, 42, 0.6)", borderRadius: "8px", border: "1px solid rgba(45, 65, 102, 0.5)" }}>
+              {/* Source & Quote */}
+              <div style={{
+                marginBottom: "14px",
+                padding: "12px 14px",
+                background: "var(--bg-card)",
+                borderRadius: "var(--radius-control)",
+                border: "1px solid var(--border-hairline)",
+              }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "6px" }}>
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "10.5px", fontWeight: 700, color: "var(--accent-cyan)", letterSpacing: "0.06em" }}>
-                    01 // SOURCE: MANAGEMENT TRANSCRIPT / FILING
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--text-muted)" }}>
+                    Source: Management transcript or filing
                   </span>
-                  <a href={claim.sourceUrl} target="_blank" rel="noreferrer" style={{ fontSize: "11.5px", color: "var(--accent-blue)" }}>
-                    {claim.source} · {claim.date} ↗
+                  <a
+                    href={claim.sourceUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ fontSize: "11px", color: "var(--accent)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "3px" }}
+                  >
+                    <span>{claim.source} ({claim.date})</span>
+                    <ExternalLinkIcon size={11} />
                   </a>
                 </div>
-                <blockquote style={{ margin: "4px 0", fontSize: "15px", fontStyle: "italic", color: "#f1f5f9", lineHeight: 1.45 }}>
+                <blockquote style={{ margin: "2px 0", fontSize: "14px", color: "var(--text-primary)", fontStyle: "italic", lineHeight: 1.5 }}>
                   “{claim.quote}”
                 </blockquote>
               </div>
 
-              {/* Claim Decomposition (if present) */}
+              {/* Claim Decomposition */}
               {claim.components && claim.components.length > 0 && (
-                <div style={{ marginBottom: "14px", display: "flex", flexDirection: "column", gap: "8px" }}>
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "10.5px", fontWeight: 700, color: "var(--text-muted)", letterSpacing: "0.06em" }}>
-                    CLAIM DECOMPOSITION // COMPONENT-LEVEL VERIFICATION
+                <div style={{ marginBottom: "14px", display: "flex", flexDirection: "column", gap: "6px" }}>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--text-muted)" }}>
+                    Component verification:
                   </span>
                   {claim.components.map((comp, cIdx) => (
                     <div
                       key={cIdx}
                       style={{
                         padding: "8px 12px",
-                        borderRadius: "6px",
-                        background: comp.status === "CORROBORATED" ? "rgba(16, 185, 129, 0.08)" : "rgba(148, 163, 184, 0.08)",
-                        border: `1px solid ${comp.status === "CORROBORATED" ? "rgba(52, 211, 153, 0.25)" : "rgba(148, 163, 184, 0.25)"}`,
+                        borderRadius: "var(--radius-control)",
+                        background: "var(--bg-card)",
+                        border: "1px solid var(--border-hairline)",
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "baseline",
@@ -125,16 +113,13 @@ export const ClaimCheckerPanel: React.FC<ClaimCheckerPanelProps> = ({ claimCheck
                         fontSize: "12px",
                       }}
                     >
-                      <span style={{ fontWeight: 600, color: "#f8fafc" }}>{comp.label}:</span>
+                      <span style={{ fontWeight: 500, color: "var(--text-primary)" }}>{comp.label}:</span>
                       <span style={{ color: "var(--text-secondary)", flex: "1 1 240px" }}>{comp.evidence}</span>
-                      <span
-                        style={{
-                          fontFamily: "var(--font-mono)",
-                          fontSize: "10.5px",
-                          fontWeight: 700,
-                          color: comp.status === "CORROBORATED" ? "var(--accent-emerald)" : "#cbd5e1",
-                        }}
-                      >
+                      <span style={{
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "10px",
+                        color: comp.status === "CORROBORATED" ? "var(--status-verified)" : "var(--text-muted)",
+                      }}>
                         [{comp.status.replace(/_/g, " ")}]
                       </span>
                     </div>
@@ -142,51 +127,77 @@ export const ClaimCheckerPanel: React.FC<ClaimCheckerPanelProps> = ({ claimCheck
                 </div>
               )}
 
-              {/* 3. GUIDANCE VS VERIFIED OUTCOME */}
-              <div className="claim-table" style={{ marginBottom: "14px" }}>
-                <div className="claim-table-head">
+              {/* Guidance vs Verified Outcome Table */}
+              <div style={{
+                marginBottom: "14px",
+                background: "var(--bg-card)",
+                border: "1px solid var(--border-hairline)",
+                borderRadius: "var(--radius-control)",
+                overflow: "hidden",
+              }}>
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "120px 1fr 1fr",
+                  gap: "10px",
+                  padding: "8px 12px",
+                  background: "var(--bg-deep)",
+                  fontSize: "11px",
+                  fontFamily: "var(--font-mono)",
+                  color: "var(--text-muted)",
+                  borderBottom: "1px solid var(--border-hairline)",
+                }}>
                   <span>Period</span>
                   <span>Executive Guidance</span>
-                  <span>Verified 10-K / 10-Q Outcome</span>
+                  <span>Verified Outcome</span>
                 </div>
                 {claim.guidanceVsActual.map((comparison) => (
-                  <div className="claim-table-row" key={comparison.period}>
-                    <span>{comparison.period}</span>
-                    <span>{comparison.guidance}</span>
-                    <a href={comparison.actualSourceUrl} target="_blank" rel="noreferrer">
-                      {comparison.actual} ↗
+                  <div
+                    key={comparison.period}
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "120px 1fr 1fr",
+                      gap: "10px",
+                      padding: "8px 12px",
+                      fontSize: "12px",
+                      borderBottom: "1px solid var(--border-hairline)",
+                      alignItems: "center",
+                    }}
+                  >
+                    <span style={{ fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>{comparison.period}</span>
+                    <span style={{ color: "var(--text-secondary)" }}>{comparison.guidance}</span>
+                    <a
+                      href={comparison.actualSourceUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{ color: "var(--accent)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "3px" }}
+                    >
+                      <span>{comparison.actual}</span>
+                      <ExternalLinkIcon size={11} />
                     </a>
                   </div>
                 ))}
               </div>
 
-              {/* 4. DERIVED VARIANCE & 5. FORENSIC INTERPRETATION */}
-              <div
-                style={{
-                  padding: "12px 16px",
-                  borderRadius: "8px",
-                  background: "rgba(11, 19, 36, 0.8)",
-                  border: "1px solid rgba(45, 65, 102, 0.6)",
-                  borderLeft: `3px solid ${statusColor}`,
-                }}
-              >
+              {/* Derived Variance & Forensic Interpretation */}
+              <div style={{
+                padding: "12px 14px",
+                borderRadius: "var(--radius-control)",
+                background: "var(--bg-card)",
+                border: "1px solid var(--border-hairline)",
+                borderLeft: `3px solid ${status === "VERIFIED" ? "var(--status-verified)" : "var(--status-warning)"}`,
+              }}>
                 {claim.derivedVariance && (
-                  <div style={{ display: "flex", alignItems: "baseline", gap: "8px", marginBottom: "6px" }}>
-                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "10.5px", fontWeight: 700, color: "var(--accent-cyan)" }}>
-                      DERIVED VARIANCE:
+                  <div style={{ display: "flex", alignItems: "baseline", gap: "8px", marginBottom: "4px" }}>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--text-muted)" }}>
+                      Derived variance:
                     </span>
-                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "12px", fontWeight: 700, color: "#f8fafc" }}>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "12px", color: "var(--text-primary)", fontWeight: 500 }}>
                       {claim.derivedVariance}
                     </span>
                   </div>
                 )}
-                <div>
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: "10.5px", fontWeight: 700, color: "var(--text-muted)", display: "block", marginBottom: "3px" }}>
-                    FORENSIC INTERPRETATION:
-                  </span>
-                  <p style={{ margin: 0, fontSize: "12.5px", color: "var(--text-secondary)", lineHeight: 1.5 }}>
-                    {claim.forensicInterpretation || claim.assessment}
-                  </p>
+                <div style={{ fontSize: "12px", color: "var(--text-secondary)", lineHeight: 1.5 }}>
+                  {claim.forensicInterpretation || claim.assessment}
                 </div>
               </div>
             </div>

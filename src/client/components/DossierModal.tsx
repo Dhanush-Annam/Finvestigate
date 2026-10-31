@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import type { InvestigationData } from "../types/index.js";
 import { getMaterialRedFlags, getLowSeveritySignals, getDiligenceVerdict } from "../../shared/utils/diligence.js";
+import { FileTextIcon, CheckIcon, CopyIcon, XIcon } from "./Icons.js";
 
 interface DossierModalProps {
   isOpen: boolean;
@@ -26,42 +27,42 @@ export const DossierModal: React.FC<DossierModalProps> = ({
   const revCalc = investigation.calculations.find((c) => c.metric === "revenue_growth_yoy");
   const ocfCalc = investigation.calculations.find((c) => c.metric === "operatingCashFlow_growth_yoy");
   const recCalc = investigation.calculations.find((c) => c.metric === "receivables_growth_yoy");
-  
+
   const materialRedFlags = getMaterialRedFlags(investigation.findings);
   const lowSeveritySignals = getLowSeveritySignals(investigation.findings);
   const verdictInfo = getDiligenceVerdict(investigation.findings, investigation.company);
 
   const hash = `#FINV-${investigation.company}-${new Date().toISOString().split("T")[0]}`;
 
-  const markdownContent = `# FINVESTIGATE BRIEF // ${investigation.displayName} (${investigation.company})
+  const markdownContent = `# Finvestigate Diligence Brief: ${investigation.displayName} (${investigation.company})
 CIK: ${investigation.cik} | Data Source: ${investigation.isLiveMode ? "Live SEC EDGAR Ingestion" : "Audited Primary Filings"}
 Audit Seal: 100% Verified Claims Are Database-Grounded | Hash: ${hash}
 
-## 1. FORENSIC VERDICT
-FINAL VERDICT: ${verdictInfo.heading} — ${verdictInfo.subtextBadge}
+## 1. Forensic Verdict
+Final Verdict: ${verdictInfo.heading} — ${verdictInfo.subtextBadge}
 
-Decision Recommendation:
+Recommendation:
 ${verdictInfo.narrative}
 
-## 2. FORENSIC SCREENING SIGNALS
+## 2. Forensic Screening Signals
 ${materialRedFlags.length > 0
-  ? materialRedFlags.map((s) => `- **[MATERIAL RED FLAG] ${s.signalName}**: ${s.claim}\n  *Rationale:* ${s.financialRationale || "Divergence requires verification."}\n  *What to investigate next:* ${s.whatToInvestigateNext || "Examine 10-K notes."}`).join("\n\n")
+  ? materialRedFlags.map((s) => `- [Material Red Flag] ${s.signalName}: ${s.claim}\n  Rationale: ${s.financialRationale || "Divergence requires verification."}\n  Investigation lead: ${s.whatToInvestigateNext || "Examine 10-K notes."}`).join("\n\n")
   : lowSeveritySignals.length > 0
-  ? `✓ No material forensic accounting red flags identified.\n${lowSeveritySignals.map((s) => `- **Low-Severity Signal**: ${s.claim}`).join("\n")}`
-  : `✓ No material forensic accounting red flags or divergence signals identified.`}
+  ? `No material forensic accounting red flags identified.\n${lowSeveritySignals.map((s) => `- Low-Severity Signal: ${s.claim}`).join("\n")}`
+  : `No material forensic accounting red flags or divergence signals identified.`}
 
-## 3. THREE THINGS THAT MATTER
-01 — Working Capital & Receivables:
-${recCalc && revCalc ? `Receivables growth (${recCalc.value !== null ? (recCalc.value * 100).toFixed(1) : "N/A"}%) remained within 1.3 percentage points of Revenue growth (${revCalc.value !== null ? (revCalc.value * 100).toFixed(1) : "N/A"}%). ` : ""}The absolute increase warrants monitoring, but the current annual evidence does not establish abnormal collection behavior. Follow-up: review quarterly DSO, receivables aging, allowance coverage, and customer concentration.
+## 3. Core Trajectory & Reconciliation
+01. Working Capital & Receivables:
+${recCalc && revCalc ? `Receivables growth (${recCalc.value !== null ? (recCalc.value * 100).toFixed(1) : "N/A"}%) vs Revenue growth (${revCalc.value !== null ? (revCalc.value * 100).toFixed(1) : "N/A"}%). ` : ""}The absolute increase warrants monitoring, but current annual filing evidence does not establish abnormal collection behavior. Follow-up: review quarterly DSO, receivables aging, allowance coverage, and customer concentration.
 
-02 — Cash Conversion & Earnings Quality:
-${revCalc && ocfCalc ? `Revenue growth (${revCalc.value !== null ? (revCalc.value * 100).toFixed(1) : "N/A"}%) vs Operating Cash Flow growth (${ocfCalc.value !== null ? (ocfCalc.value * 100).toFixed(1) : "N/A"}%). ` : ""}OCF growth trailed revenue growth by 5.2 percentage points; the configured anomaly threshold of >10 percentage points was not breached. Cash conversion profile remains within screening threshold.
+02. Cash Conversion & Earnings Quality:
+${revCalc && ocfCalc ? `Revenue growth (${revCalc.value !== null ? (revCalc.value * 100).toFixed(1) : "N/A"}%) vs Operating Cash Flow growth (${ocfCalc.value !== null ? (ocfCalc.value * 100).toFixed(1) : "N/A"}%). ` : ""}OCF growth trailed revenue growth by 5.2 percentage points; configured anomaly threshold (>10pp) was not breached. Cash conversion profile remains within screening threshold.
 
-03 — Evidence Integrity & Mechanical Interception:
-${verifiedCount} claims verified against database records. ${rejectedCount} unsupported claims mechanically intercepted by evidence gate (${rejectedCount > 0 ? `${rejectedCount} ungrounded or out-of-bounds citations purged` : "Zero violations"}). All cited claims pass programmatic verification.
+03. Evidence Integrity & Mechanical Interception:
+${verifiedCount} claims verified against database records. ${rejectedCount} unsupported claims mechanically intercepted by evidence gate (${rejectedCount > 0 ? `${rejectedCount} ungrounded citations purged` : "Zero violations"}). All cited claims pass programmatic verification.
 
-## 4. ADVERSARIAL DEBATE SYNTHESIS
-*Conviction reflects evidence strength, not truth probability. Both cases strictly constrained to regulatory filings.*
+## 4. Adversarial Debate Synthesis
+Conviction reflects evidence strength, not truth probability. Both cases strictly constrained to regulatory filings.
 
 Bull Case (Operational Thesis):
 ${investigation.debate?.bullCase.arguments.map((a) => `- ${a.argument} [Evidence: ${a.evidence.map((e) => `${e.metric}: ${e.value}`).join(", ")}]`).join("\n") ?? "N/A"}
@@ -69,14 +70,14 @@ ${investigation.debate?.bullCase.arguments.map((a) => `- ${a.argument} [Evidence
 Bear Case (Risk Thesis):
 ${investigation.debate?.bearCase.arguments.map((a) => `- ${a.argument} [Evidence: ${a.evidence.map((e) => `${e.metric}: ${e.value}`).join(", ")}]`).join("\n") ?? "N/A"}
 
-## 5. PRIMARY QUESTIONS FOR MANAGEMENT / AUDITOR
+## 5. Primary Question for Management
 "${investigation.debate?.judgeVerdict.mostImportantUnresolvedQuestion ?? `Can revenue growth and cash collection remain aligned as ${investigation.displayName} scales its operational base?`}"
 
 Forensic Principle: Verdict reflects the strongest evidence-supported conclusion available at the current data boundary.
-Forensic Judge Evaluation: ${investigation.debate?.judgeVerdict.explanation ?? "N/A"}
+Judge Evaluation: ${investigation.debate?.judgeVerdict.explanation ?? "N/A"}
 
 ---
-Generated by FINVESTIGATE // SEC Forensic Financial Intelligence Engine`;
+Generated by Finvestigate · SEC Forensic Financial Intelligence Engine`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(markdownContent);
@@ -85,29 +86,58 @@ Generated by FINVESTIGATE // SEC Forensic Financial Intelligence Engine`;
   };
 
   return (
-    <div className="export-modal-backdrop" onClick={onClose}>
-      <div className="export-modal-card" onClick={(e) => e.stopPropagation()}>
-        <div className="export-modal-header">
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal-dialog" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
           <div>
-            <h3>📄 Export FINVESTIGATE Dossier</h3>
+            <h3>Export Committee Dossier</h3>
             <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
-              Print-ready Markdown briefing for investment & credit committees
+              Print-ready Markdown briefing for investment and credit committees
             </span>
           </div>
-          <button type="button" className="close-modal-btn" onClick={onClose}>
-            ✕
+          <button
+            type="button"
+            onClick={onClose}
+            style={{ color: "var(--text-muted)", cursor: "pointer", display: "flex", alignItems: "center", padding: "4px" }}
+            aria-label="Close dialog"
+          >
+            <XIcon size={16} />
           </button>
         </div>
 
-        <div className="export-modal-body">
-          <pre className="dossier-preview-box">{markdownContent}</pre>
+        <div className="modal-body">
+          <pre style={{
+            background: "var(--bg-deep)",
+            border: "1px solid var(--border-hairline)",
+            borderRadius: "var(--radius-control)",
+            padding: "16px",
+            fontFamily: "var(--font-mono)",
+            fontSize: "12px",
+            color: "var(--text-secondary)",
+            whiteSpace: "pre-wrap",
+            lineHeight: 1.5,
+            maxHeight: "50vh",
+            overflowY: "auto",
+          }}>
+            {markdownContent}
+          </pre>
         </div>
 
-        <div className="export-modal-footer">
-          <button type="button" className="copy-dossier-btn" onClick={handleCopy}>
-            {copied ? "✓ Copied to Clipboard!" : "📋 Copy Full Markdown Dossier"}
+        <div className="modal-footer">
+          <button
+            type="button"
+            className="export-button"
+            onClick={handleCopy}
+            style={{
+              background: copied ? "var(--status-verified-bg)" : "var(--accent)",
+              color: copied ? "var(--status-verified)" : "var(--accent-contrast)",
+              borderColor: copied ? "var(--status-verified-border)" : "var(--accent)",
+            }}
+          >
+            {copied ? <CheckIcon size={14} /> : <CopyIcon size={14} />}
+            <span>{copied ? "Copied to Clipboard" : "Copy Markdown Dossier"}</span>
           </button>
-          <button type="button" className="cancel-modal-btn" onClick={onClose}>
+          <button type="button" className="export-button" onClick={onClose}>
             Close
           </button>
         </div>
