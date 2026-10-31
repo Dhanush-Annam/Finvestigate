@@ -217,7 +217,7 @@ function App() {
       {/* Error Fallback Banner */}
       {error && (
         <section className="error-banner" style={{ marginTop: "24px" }}>
-          <h3>⚠️ Filing Retrieval Notice</h3>
+          <h3>Filing Retrieval Notice</h3>
           <p>{error}</p>
           <div className="error-actions">
             <button type="button" onClick={() => { setTicker("NVDA"); fetchCompanyData("NVDA"); }}>Switch to NVIDIA (NVDA)</button>

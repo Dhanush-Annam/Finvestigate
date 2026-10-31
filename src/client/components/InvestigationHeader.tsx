@@ -1,5 +1,6 @@
 import React from "react";
 import type { InvestigationData } from "../types/index.js";
+import { ShieldIcon, CheckIcon, FileTextIcon, SearchIcon } from "./Icons.js";
 
 interface InvestigationHeaderProps {
   investigation: InvestigationData | null;
@@ -36,10 +37,10 @@ export const InvestigationHeader: React.FC<InvestigationHeaderProps> = ({
 }) => {
   const isIndian = INDIAN_TICKERS.has(ticker.toUpperCase());
   const dataSourceLabel = isIndian
-    ? "CURATED BSE AUDITED BENCHMARK"
+    ? "BSE Primary Audited"
     : investigation?.isLiveMode
-    ? "SEC EDGAR 10-K LIVE"
-    : "SEC CURATED 10-K REPO";
+    ? "SEC EDGAR 10-K Live"
+    : "SEC Curated 10-K Repo";
 
   const dataSourceSubtext = isIndian
     ? "Consolidated audited financials in INR from BSE primary regulatory filings"
@@ -54,10 +55,10 @@ export const InvestigationHeader: React.FC<InvestigationHeaderProps> = ({
           <div className="brand-icon">F</div>
           <div>
             <div className="brand">
-              FINVESTIGATE
-              <span className="brand-badge">SEC FORENSIC AUDIT</span>
+              Finvestigate
+              <span className="brand-badge">SEC Forensic Terminal</span>
             </div>
-            <span className="tagline">Deterministic Evidence-First Financial Intelligence</span>
+            <span className="tagline">Deterministic evidence-grounded financial intelligence</span>
           </div>
         </div>
 
@@ -66,13 +67,13 @@ export const InvestigationHeader: React.FC<InvestigationHeaderProps> = ({
             type="button"
             className={`verification-shield-badge ${rejectedCount > 0 ? "stripped" : "clean"}`}
             onClick={onToggleDrawer}
-            title="Production 10-K Evidence Gate: Click to view mechanical gate audit logs"
+            title="Evidence Gate audit log"
           >
-            <span>{rejectedCount > 0 ? "🛡️" : "✓"}</span>
+            {rejectedCount > 0 ? <ShieldIcon size={14} /> : <CheckIcon size={14} />}
             <span>
               {rejectedCount > 0
-                ? `${rejectedCount} / ${totalCount} CLAIMS REJECTED BY EVIDENCE GATE`
-                : `ALL CITED CLAIMS PASS VERIFICATION (${verifiedCount}/${totalCount})`}
+                ? `${rejectedCount} of ${totalCount} claims intercepted by gate`
+                : `All cited claims verified (${verifiedCount}/${totalCount})`}
             </span>
           </button>
 
@@ -80,7 +81,7 @@ export const InvestigationHeader: React.FC<InvestigationHeaderProps> = ({
             className={`status-pill ${isIndian ? "curated" : investigation?.isLiveMode ? "live" : "curated"}`}
             title={dataSourceSubtext}
           >
-            <span className="pulse-dot"></span>
+            <span className="indicator-dot" />
             {dataSourceLabel}
           </span>
 
@@ -90,16 +91,16 @@ export const InvestigationHeader: React.FC<InvestigationHeaderProps> = ({
             onClick={onOpenExportModal}
             title="Export full investigation brief"
           >
-            <span>📄</span>
+            <FileTextIcon size={14} />
             <span>Export Dossier</span>
           </button>
         </div>
       </header>
 
       {/* Primary Ticker Selector & Search Bar */}
-      <div className="picker-container" style={{ marginTop: "24px" }}>
-        <div className="quick-tickers-label">Audited Primary Benchmarks:</div>
+      <div className="picker-container">
         <div className="quick-tickers-row" aria-label="Company selection">
+          <span className="quick-tickers-label">Primary benchmarks:</span>
           {["NVDA", "AAPL", "MSFT", "RELIANCE", "TCS"].map((sym) => (
             <button
               key={sym}
@@ -107,7 +108,6 @@ export const InvestigationHeader: React.FC<InvestigationHeaderProps> = ({
               className={`ticker-chip ${ticker === sym ? "selected" : ""}`}
               onClick={() => onSelectTicker(sym)}
               disabled={loading}
-              style={{ whiteSpace: "nowrap" }}
             >
               <strong>{sym}</strong>
               <span title={INDIAN_TICKERS.has(sym) ? "Curated Primary-Source Annual Report Data (Ind AS)" : "Audited SEC EDGAR 10-K"}>
@@ -123,38 +123,26 @@ export const InvestigationHeader: React.FC<InvestigationHeaderProps> = ({
               <input
                 type="text"
                 className={`live-input ${searchError ? "input-error" : ""}`}
-                placeholder="Search any SEC ticker or CIK (e.g. INTC, TSLA, AMZN)..."
+                placeholder="Search SEC ticker or CIK (e.g. INTC, TSLA)..."
                 value={liveQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
                 disabled={loading}
-                style={{ width: "380px" }}
               />
               {searchError && <span className="field-error">{searchError}</span>}
             </div>
             <button type="submit" className="live-button" disabled={loading}>
-              {loading ? "Ingesting..." : "Investigate ↗"}
+              {loading ? "Ingesting..." : "Investigate"}
             </button>
           </form>
         </div>
       </div>
 
-      <div
-        style={{
-          background: isIndian ? "rgba(245, 158, 11, 0.12)" : "rgba(30, 58, 138, 0.25)",
-          borderBottom: isIndian ? "1px solid rgba(245, 158, 11, 0.3)" : "1px solid rgba(59, 130, 246, 0.25)",
-          padding: "6px 24px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          fontSize: "12px",
-          color: isIndian ? "#fbbf24" : "#93c5fd",
-        }}
-      >
+      <div className="provenance-bar">
         <span>
           <strong>Data Provenance:</strong> {dataSourceSubtext}
         </span>
-        <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", opacity: 0.85 }}>
-          {isIndian ? "Consolidated Indian Accounting Standards (Ind AS)" : "SEC EDGAR US GAAP"}
+        <span className="source-spec">
+          {isIndian ? "Ind AS Consolidated" : "SEC EDGAR US GAAP"}
         </span>
       </div>
     </>
