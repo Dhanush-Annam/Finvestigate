@@ -1,6 +1,7 @@
 import React from "react";
 import type { Finding } from "../../shared/types/index.js";
 import { labelFor } from "../types/index.js";
+import { ScaleIcon, TrendingUpIcon, TrendingDownIcon, SearchIcon, AlertTriangleIcon } from "./Icons.js";
 
 interface FindingCardProps {
   findings: Finding[];
@@ -16,13 +17,10 @@ export const FindingCard: React.FC<FindingCardProps> = ({
   return (
     <section className="dossier-panel" aria-label="Forensic Anomaly Case Files">
       <div className="section-heading">
-        <div>
-          <p className="eyebrow">STAGE 02 · DISCOVER ➔ 02B FORENSIC CASE FILES</p>
-          <h2>Detailed Divergence Evidence & Rationale</h2>
-        </div>
+        <p className="eyebrow">Stage 02 · Discover · Forensic Case Files</p>
+        <h2>Detailed Divergence Evidence & Rationale</h2>
         <p>
-          Every anomaly maps directly to deterministic math in the evidence store. Each file outlines
-          the financial rationale, counter-evidence, and precise investigative questions for management.
+          Every anomaly maps directly to deterministic math in the evidence store with verified source facts.
         </p>
       </div>
 
@@ -32,22 +30,20 @@ export const FindingCard: React.FC<FindingCardProps> = ({
             <div className="dossier-topline">
               <span className="dossier-case-num">{finding.findingId}</span>
               <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-                <span className={`finding-status ${finding.severity === "HIGH" ? "requires_investigation" : "positive_signal"}`}>
-                  {finding.severity} SEVERITY
+                <span className={`finding-status-tag ${finding.severity === "HIGH" ? "critical" : "warning"}`}>
+                  <AlertTriangleIcon size={12} />
+                  {finding.severity === "HIGH" ? "High Severity" : "Low Severity"}
                 </span>
-                <span
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "11px",
-                    fontWeight: 700,
-                    color: "var(--accent-cyan)",
-                    background: "rgba(56, 189, 248, 0.12)",
-                    border: "1px solid rgba(56, 189, 248, 0.3)",
-                    padding: "3px 8px",
-                    borderRadius: "4px",
-                  }}
-                >
-                  {finding.signalName || finding.category.replace(/_/g, " ").toUpperCase()}
+                <span style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "11px",
+                  color: "var(--text-secondary)",
+                  background: "var(--bg-card)",
+                  border: "1px solid var(--border-hairline)",
+                  padding: "2px 8px",
+                  borderRadius: "var(--radius-tag)",
+                }}>
+                  {finding.signalName || finding.category.replace(/_/g, " ")}
                 </span>
                 {finding.threshold && (
                   <span style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
@@ -57,7 +53,7 @@ export const FindingCard: React.FC<FindingCardProps> = ({
               </div>
             </div>
 
-            <h3 style={{ fontSize: "18px", fontWeight: 700, margin: "12px 0 14px", color: "#f8fafc" }}>
+            <h3 className="dossier-case-title">
               {finding.claim}
             </h3>
 
@@ -72,32 +68,38 @@ export const FindingCard: React.FC<FindingCardProps> = ({
             </div>
 
             {/* Financial Rationale Callout */}
-            <div className="dossier-why-matters-box">
-              <div className="why-matters-head">
-                <span>⚖</span>
-                <span>Why Does This Matter? // Financial Analyst Rationale</span>
+            <div className="dossier-rationale-box">
+              <div className="rationale-head">
+                <ScaleIcon size={14} style={{ color: "var(--accent)" }} />
+                <span>Financial Analyst Rationale</span>
               </div>
-              <p className="why-matters-text">
+              <p className="rationale-text">
                 {finding.financialRationale ||
-                  "The absolute increase warrants monitoring, but the current annual evidence does not establish abnormal collection behavior."}
+                  "The absolute increase warrants monitoring, but current annual filing disclosures do not establish abnormal collection behavior."}
               </p>
             </div>
 
             {/* Counter-Evidence Note */}
-            <p className="contradiction" style={{ margin: "12px 0 16px" }}>
-              <b>Audited Counter-Evidence:</b> {finding.contradictoryEvidence}
+            <p className="contradiction-box">
+              <strong>Audited counter-evidence:</strong> {finding.contradictoryEvidence}
             </p>
 
-            {/* Division of Labor: AI Bull vs Bear Interpretations */}
+            {/* Balanced Perspectives: Bull vs Bear Interpretations */}
             <div className="dossier-sides-grid">
               <div className="dossier-side-box bull">
-                <h4>🐂 Bull Interpretation</h4>
+                <h4>
+                  <TrendingUpIcon size={14} style={{ color: "var(--status-verified)" }} />
+                  <span>Bull Interpretation</span>
+                </h4>
                 <p>
                   Working-capital investments or inventory builds in high-growth periods frequently depress cash collection temporarily without impairing underlying unit economics.
                 </p>
               </div>
               <div className="dossier-side-box bear">
-                <h4>🐻 Bear Interpretation</h4>
+                <h4>
+                  <TrendingDownIcon size={14} style={{ color: "var(--status-rejected)" }} />
+                  <span>Bear Interpretation</span>
+                </h4>
                 <p>
                   Surging accounting profit unbacked by cash receipts can signal customer payment extensions, aggressive revenue recognition, or mounting collection friction.
                 </p>
@@ -105,9 +107,18 @@ export const FindingCard: React.FC<FindingCardProps> = ({
             </div>
 
             {/* What to investigate next */}
-            <div className="dossier-question-box">
-              <h4>🔍 What to Investigate Next // Management Follow-up</h4>
-              <p>
+            <div style={{
+              marginTop: "14px",
+              padding: "12px 14px",
+              background: "var(--bg-card)",
+              border: "1px solid var(--border-hairline)",
+              borderRadius: "var(--radius-control)",
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: 500, color: "var(--text-primary)", marginBottom: "4px" }}>
+                <SearchIcon size={14} style={{ color: "var(--accent)" }} />
+                <span>What to Investigate Next</span>
+              </div>
+              <p style={{ fontSize: "12px", color: "var(--text-secondary)", margin: 0, lineHeight: 1.5 }}>
                 {finding.whatToInvestigateNext ||
                   "Review customer credit terms and Days Sales Outstanding (DSO) aging buckets in the 10-K footnote disclosures."}
               </p>
@@ -116,10 +127,11 @@ export const FindingCard: React.FC<FindingCardProps> = ({
             <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end" }}>
               <button
                 type="button"
-                className="inspect-calc-btn"
+                className="export-button"
                 onClick={() => onInspectCalculation(finding.calculationRefs[0] ?? null)}
               >
-                Trace primary calculation in Lineage DAG →
+                <span>Trace calculation in Lineage</span>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "12px" }}>→</span>
               </button>
             </div>
           </article>
