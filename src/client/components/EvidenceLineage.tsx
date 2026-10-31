@@ -1,6 +1,7 @@
 import React from "react";
 import type { Calculation, Fact } from "../../shared/types/index.js";
 import { labelFor, displayCalculationValue, displayValue } from "../types/index.js";
+import { CheckIcon, ExternalLinkIcon, FileTextIcon, TerminalIcon } from "./Icons.js";
 
 interface EvidenceLineageProps {
   company: string;
@@ -81,12 +82,10 @@ export const EvidenceLineage: React.FC<EvidenceLineageProps> = ({
   return (
     <section className="evidence-panel" ref={innerRef as React.RefObject<HTMLElement>} aria-label="Evidence explorer">
       <div className="section-heading">
-        <div>
-          <p className="eyebrow">STAGE 04B · EVIDENCE EXPLORER</p>
-          <h2>Trace Every Deterministic Calculation</h2>
-        </div>
+        <p className="eyebrow">Stage 04 · Evidence Lineage DAG</p>
+        <h2>Deterministic Calculation Provenance</h2>
         <p>
-          Click any calculation to reveal its reported inputs, mathematical formula, and primary regulatory filing URLs.
+          Select any metric to inspect its reported inputs, mathematical formula, and primary regulatory filing accession records.
         </p>
       </div>
 
@@ -96,113 +95,128 @@ export const EvidenceLineage: React.FC<EvidenceLineageProps> = ({
             <button
               key={calculation.calcId}
               type="button"
-              className={`calculation-row ${calculation.calcId === (selectedCalculation?.calcId) ? "active" : ""}`}
+              className={`calculation-row ${calculation.calcId === selectedCalculation?.calcId ? "active" : ""}`}
               onClick={() => onSelectCalcId(calculation.calcId)}
             >
-              <div>
-                <span>{labelFor(calculation.metric)}</span>
-                <small>{calculation.period.label}</small>
+              <div className="calc-name">{labelFor(calculation.metric)}</div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+                  {calculation.period.label}
+                </span>
+                <span className="calc-val">{displayCalculationValue(calculation)}</span>
               </div>
-              <strong>{displayCalculationValue(calculation)}</strong>
             </button>
           ))}
         </div>
 
         {selectedCalculation && (
-          <article className="chain-detail">
-            {/* Clean 4-Node Visual Evidence Lineage */}
-            <div className="visual-evidence-chain">
-              <div className="chain-node filing">
-                <div className="node-head">
-                  <span className="node-step">01 · SOURCE</span>
-                  <span className="node-tag">FILING</span>
+          <div className="lineage-detail-card">
+            {/* 4-Node Visual Evidence Lineage */}
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(4, 1fr)",
+              gap: "10px",
+              marginBottom: "20px",
+            }}>
+              <div style={{ padding: "10px 12px", background: "var(--bg-card)", border: "1px solid var(--border-hairline)", borderRadius: "var(--radius-control)" }}>
+                <div style={{ fontSize: "10px", color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: "4px" }}>01 · Source</div>
+                <div style={{ fontSize: "12px", fontWeight: 500, color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {inputs[0]?.source || `${company} Filing`}
                 </div>
-                <span className="node-val">{inputs[0]?.source || `${company} Regulatory Filing`}</span>
                 {inputs[0]?.sourceUrl && (
-                  <a href={inputs[0].sourceUrl} target="_blank" rel="noreferrer" className="node-link">
-                    Official Doc ↗
+                  <a
+                    href={inputs[0].sourceUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ fontSize: "11px", color: "var(--accent)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "3px", marginTop: "4px" }}
+                  >
+                    <span>SEC Document</span>
+                    <ExternalLinkIcon size={11} />
                   </a>
                 )}
               </div>
 
-              <div className="chain-node fact">
-                <div className="node-head">
-                  <span className="node-step">02 · FACT</span>
-                  <span className="node-tag">REPORTED</span>
-                </div>
-                <span className="node-val">
+              <div style={{ padding: "10px 12px", background: "var(--bg-card)", border: "1px solid var(--border-hairline)", borderRadius: "var(--radius-control)" }}>
+                <div style={{ fontSize: "10px", color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: "4px" }}>02 · Reported Fact</div>
+                <div style={{ fontSize: "13px", fontWeight: 500, color: "var(--text-primary)", fontFamily: "var(--font-mono)" }}>
                   {inputs[0] ? displayValue(inputs[0].value, inputs[0].unit) : "Reported Fact"}
+                </div>
+                <span style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+                  {inputs[0]?.factId || "Fact Node"}
                 </span>
-                <span className="node-id">{inputs[0]?.factId || "Fact Node"}</span>
               </div>
 
-              <div className="chain-node math">
-                <div className="node-head">
-                  <span className="node-step">03 · FORMULA</span>
-                  <span className="node-tag">DETERMINISTIC</span>
-                </div>
-                <span className="node-val" title={detailedLineage?.formulaName || selectedCalculation.formula}>
+              <div style={{ padding: "10px 12px", background: "var(--bg-card)", border: "1px solid var(--border-hairline)", borderRadius: "var(--radius-control)" }}>
+                <div style={{ fontSize: "10px", color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: "4px" }}>03 · Formula</div>
+                <div style={{ fontSize: "12px", color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={detailedLineage?.formulaName || selectedCalculation.formula}>
                   {detailedLineage?.formulaName || selectedCalculation.formula}
+                </div>
+                <span style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+                  {selectedCalculation.calcId}
                 </span>
-                <span className="node-id">{selectedCalculation.calcId}</span>
               </div>
 
-              <div className="chain-node verified">
-                <div className="node-head">
-                  <span className="node-step">04 · VERIFIED</span>
-                  <span className="node-tag">AUDITED</span>
+              <div style={{ padding: "10px 12px", background: "var(--status-verified-bg)", border: "1px solid var(--status-verified-border)", borderRadius: "var(--radius-control)" }}>
+                <div style={{ fontSize: "10px", color: "var(--status-verified)", fontFamily: "var(--font-mono)", marginBottom: "4px" }}>04 · Verified</div>
+                <div style={{ fontSize: "14px", fontWeight: 500, color: "var(--status-verified)", fontFamily: "var(--font-mono)" }}>
+                  {displayCalculationValue(selectedCalculation)}
                 </div>
-                <span className="node-val">{displayCalculationValue(selectedCalculation)}</span>
-                <span className="node-id">✓ Mechanically Verified</span>
+                <div style={{ fontSize: "11px", color: "var(--status-verified)", display: "flex", alignItems: "center", gap: "3px" }}>
+                  <CheckIcon size={12} />
+                  <span>Ground truth</span>
+                </div>
               </div>
             </div>
 
-            <p className="type calculation">CALCULATION ID · {selectedCalculation.calcId}</p>
-            <h3>
-              {labelFor(selectedCalculation.metric)}: {displayCalculationValue(selectedCalculation)}
-            </h3>
+            <div style={{ marginBottom: "16px" }}>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--text-muted)" }}>
+                Calculation ID: {selectedCalculation.calcId}
+              </span>
+              <h3 style={{ fontSize: "18px", fontWeight: 500, color: "var(--text-primary)", margin: "4px 0" }}>
+                {labelFor(selectedCalculation.metric)}: {displayCalculationValue(selectedCalculation)}
+              </h3>
+            </div>
 
             {/* Arithmetic Lineage Breakdown Box */}
-            <div
-              style={{
-                padding: "10px 14px",
-                background: "rgba(15, 23, 42, 0.75)",
-                borderRadius: "6px",
-                border: "1px solid rgba(56, 189, 248, 0.3)",
-                margin: "10px 0 14px",
-                fontFamily: "var(--font-mono)",
-                fontSize: "12.5px",
-                color: "#e2e8f0",
-              }}
-            >
-              <span style={{ fontSize: "10.5px", color: "var(--accent-cyan)", display: "block", marginBottom: "3px", fontWeight: 700 }}>
-                AUDITED ARITHMETIC RECONCILIATION:
+            <div className="formula-display">
+              <span style={{ fontSize: "11px", color: "var(--text-muted)", display: "block", marginBottom: "4px" }}>
+                Audited arithmetic reconciliation:
               </span>
-              <strong style={{ color: "#38bdf8" }}>{detailedLineage?.mathBreakdown}</strong>
+              <span style={{ color: "var(--accent)" }}>{detailedLineage?.mathBreakdown}</span>
             </div>
 
-            <p className="formula">{selectedCalculation.formula}</p>
-
-            <div className="chain-arrow">
-              <span>↑</span> derived from {inputs.length} reported filing fact{inputs.length === 1 ? "" : "s"}
+            <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "10px" }}>
+              Derived from {inputs.length} reported filing fact{inputs.length === 1 ? "" : "s"}:
             </div>
 
-            <div className="input-facts">
+            <div className="input-facts-grid">
               {inputs.map((fact) => (
-                <article key={fact.factId}>
-                  <p className="type fact">FACT · {fact.period.label}</p>
-                  <strong>
-                    {labelFor(fact.metric)}
-                    <span>{displayValue(fact.value, fact.unit)}</span>
-                  </strong>
-                  <p>{fact.source}</p>
-                  <a href={fact.sourceUrl} target="_blank" rel="noreferrer">
-                    Open regulatory source ↗
-                  </a>
-                </article>
+                <div className="fact-card" key={fact.factId}>
+                  <div className="fact-label">Fact · {fact.period.label} · {fact.factId}</div>
+                  <div className="fact-value">
+                    {labelFor(fact.metric)}: <span>{displayValue(fact.value, fact.unit)}</span>
+                  </div>
+                  <div className="fact-source">
+                    <FileTextIcon size={12} />
+                    <span>{fact.source}</span>
+                  </div>
+                  {fact.sourceUrl && (
+                    <div style={{ marginTop: "6px" }}>
+                      <a
+                        href={fact.sourceUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{ fontSize: "11px", color: "var(--accent)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "3px" }}
+                      >
+                        <span>Open SEC Filing</span>
+                        <ExternalLinkIcon size={11} />
+                      </a>
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
-          </article>
+          </div>
         )}
       </div>
     </section>

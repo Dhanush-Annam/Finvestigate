@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import type { AttackScenario, AdversarialAttackResult } from "../types/index.js";
+import { ShieldIcon, ZapIcon, RefreshCwIcon, AlertTriangleIcon, CheckIcon } from "./Icons.js";
 
 interface AttackCenterProps {
   ticker: string;
@@ -10,28 +11,28 @@ interface AttackCenterProps {
 const SCENARIOS: { id: AttackScenario; label: string; name: string; desc: string; expectedCode: string }[] = [
   {
     id: "fabricated_id",
-    label: "A. Fake Ref ID",
+    label: "Fabricated Reference ID",
     name: "Scenario A: Fabricated Reference ID",
     desc: "AI claims +999% revenue citing non-existent reference ID 'REF-NONEXISTENT-999'.",
     expectedCode: "FAIL_MISSING_REF",
   },
   {
     id: "cross_company",
-    label: "B. Cross-Company",
-    name: "Scenario B: Cross-Company Reference Contamination",
+    label: "Cross-Company Reference",
+    name: "Scenario B: Cross-Company Contamination",
     desc: "AI cites valid competitor 10-K fact (e.g. Apple revenue) in this company's audit.",
     expectedCode: "FAIL_CROSS_COMPANY",
   },
   {
     id: "numeric_hallucination",
-    label: "C. Numeric Drift",
-    name: "Scenario C: Numeric Drift (>0.5% Tolerance Boundary)",
+    label: "Numeric Drift (>0.5%)",
+    name: "Scenario C: Numeric Drift (>0.5% Boundary)",
     desc: "AI inflates verified DB figure by +40%, violating strict 0.5% tolerance threshold.",
     expectedCode: "FAIL_MISMATCH",
   },
   {
     id: "sign_flip_mismatch",
-    label: "D. Sign-Flip Inversion",
+    label: "Sign-Flip Inversion",
     name: "Scenario D: Sign-Flip Semantic Inversion",
     desc: "AI inverts sign-flip status or asserts numeric growth on a turnaround company.",
     expectedCode: "FAIL_SIGN_FLIP",
@@ -76,28 +77,27 @@ export const AttackCenter: React.FC<AttackCenterProps> = ({
 
   return (
     <section
-      className={`headline-attack-card ${result ? "engaged" : ""}`}
+      className="headline-attack-card"
       ref={innerRef as React.RefObject<HTMLElement>}
       id="step-attack"
       aria-label="Adversarial attack demonstration center"
     >
       <div className="attack-card-top">
-        <div className="attack-title-area">
-          <span className="attack-badge-chip">STAGE 03 · RED-TEAM ADVERSARIAL GATE ATTACK</span>
-          <h2>Adversarial Stress-Testing: Deliberate Hallucination Injection</h2>
+        <div>
+          <p className="eyebrow">Stage 03 · Adversarial Gate Stress-Testing</p>
+          <h2>Deliberate Hallucination Injection</h2>
         </div>
         <p style={{ color: "var(--text-secondary)", fontSize: "13px", maxWidth: "560px", margin: 0, lineHeight: 1.6 }}>
-          FINVESTIGATE does not rely on LLM honesty. This console deliberately injects known adversarial
-          failure modes into the backend verification gate (<code style={{ color: "var(--accent-cyan)", fontFamily: "var(--font-mono)" }}>POST /api/investigations/{ticker}/attack</code>).
-          The mechanical gate rejects the claim against the verified database in sub-5ms, writes to the audit log, and engages atomic fallback.
+          Injects known adversarial failure modes directly into the backend verification gate.
+          The mechanical gate rejects the ungrounded claim against the database in sub-5ms, records an audit event, and activates atomic fallback.
         </p>
       </div>
 
       {/* Scenario Selector & Attack Action Bar */}
       <div className="attack-action-bar">
         <div className="attack-tabs">
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--text-muted)", fontWeight: 700, marginRight: "4px" }}>
-            VECTOR:
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--text-muted)", fontWeight: 500, marginRight: "4px" }}>
+            Vector:
           </span>
           {SCENARIOS.map((sc) => (
             <button
@@ -114,143 +114,146 @@ export const AttackCenter: React.FC<AttackCenterProps> = ({
           ))}
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
           <button
             type="button"
-            className="attack-fire-btn attack"
+            className="attack-inject-btn"
             onClick={handleExecuteAttack}
             disabled={loading}
           >
-            {loading ? "⚔ Intercepting Injected Claim..." : "⚡ INJECT ADVERSARIAL CLAIM (LIVE POST)"}
+            {loading ? <RefreshCwIcon size={14} className="spinning" /> : <ZapIcon size={14} />}
+            <span>{loading ? "Intercepting..." : "Inject Adversarial Claim"}</span>
           </button>
           {result && (
             <button
               type="button"
-              className="attack-fire-btn restore"
+              className="export-button"
               onClick={() => setResult(null)}
             >
-              ✓ Reset
+              <RefreshCwIcon size={13} />
+              <span>Reset</span>
             </button>
           )}
         </div>
       </div>
 
       {/* Scenario Description Sub-bar */}
-      <div
-        style={{
-          padding: "10px 16px",
-          background: "rgba(15, 23, 42, 0.6)",
-          borderRadius: "6px",
-          border: "1px solid rgba(45, 65, 102, 0.4)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: "10px",
-          marginBottom: "16px",
-          fontSize: "12px",
-        }}
-      >
+      <div style={{
+        padding: "10px 14px",
+        background: "var(--bg-deep)",
+        borderRadius: "var(--radius-control)",
+        border: "1px solid var(--border-hairline)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        flexWrap: "wrap",
+        gap: "10px",
+        marginBottom: "16px",
+        fontSize: "12px",
+      }}>
         <div>
-          <strong style={{ color: "#fca5a5" }}>{activeScenarioMeta.name}:</strong>{" "}
+          <strong style={{ color: "var(--text-primary)" }}>{activeScenarioMeta.name}:</strong>{" "}
           <span style={{ color: "var(--text-secondary)" }}>{activeScenarioMeta.desc}</span>
         </div>
-        <div style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "#f87171" }}>
-          Target Code: <code>{activeScenarioMeta.expectedCode}</code>
+        <div style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--status-rejected)" }}>
+          Expected code: <code>{activeScenarioMeta.expectedCode}</code>
         </div>
       </div>
 
       {error && (
-        <div style={{ color: "#f87171", padding: "10px 14px", background: "rgba(239, 68, 68, 0.1)", borderRadius: "6px", marginBottom: "16px", fontSize: "13px" }}>
-          ⚠ Error executing attack: {error}
+        <div style={{
+          color: "var(--status-rejected)",
+          padding: "10px 14px",
+          background: "var(--status-rejected-bg)",
+          border: "1px solid var(--status-rejected-border)",
+          borderRadius: "var(--radius-control)",
+          marginBottom: "16px",
+          fontSize: "13px",
+        }}>
+          {error}
         </div>
       )}
 
       {/* Live Attack Interception Terminal Rejection Box */}
       {result && (
-        <div className="terminal-rejection-box">
-          <div className="rejection-box-head">
-            <span className="rejection-box-title">
-              🛡️ MECHANICAL GATE INTERCEPTION: REJECTED & PURGED
+        <div className="attack-result-box">
+          <div className="attack-result-header">
+            <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <ShieldIcon size={14} />
+              <span>Mechanical Gate Interception: Rejected & Purged</span>
             </span>
-            <span className="rejection-box-latency">
-              LATENCY: {result.latencyMs.toFixed(1)}ms · MECHANICAL CODE: {result.resultCode.toUpperCase()}
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--text-muted)" }}>
+              Latency: {result.latencyMs.toFixed(1)}ms · Code: {result.resultCode.toUpperCase()}
             </span>
           </div>
 
           {/* 5-Stage Mechanical Defense Pipeline */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
-              gap: "8px",
-              margin: "12px 0 16px",
-              padding: "10px",
-              background: "rgba(0, 0, 0, 0.45)",
-              borderRadius: "6px",
-              border: "1px solid rgba(239, 68, 68, 0.3)",
-            }}
-          >
-            <div style={{ padding: "6px 8px", background: "rgba(239, 68, 68, 0.1)", borderRadius: "4px", border: "1px solid rgba(239, 68, 68, 0.25)" }}>
-              <div style={{ fontSize: "9.5px", color: "var(--text-muted)", fontWeight: 700 }}>01 · ATTACK</div>
-              <strong style={{ fontSize: "11px", color: "#fca5a5", display: "block", marginTop: "2px" }}>AI Vector</strong>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
+            gap: "8px",
+            margin: "12px 0 16px",
+            padding: "8px",
+            background: "var(--bg-deep)",
+            borderRadius: "var(--radius-control)",
+            border: "1px solid var(--border-hairline)",
+          }}>
+            <div style={{ padding: "6px 8px", background: "var(--bg-card)", borderRadius: "var(--radius-tag)", border: "1px solid var(--border-hairline)" }}>
+              <div style={{ fontSize: "10px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>01 · Vector</div>
+              <strong style={{ fontSize: "11px", color: "var(--status-rejected)", display: "block", marginTop: "2px" }}>AI Vector</strong>
               <span style={{ fontSize: "10px", color: "var(--text-secondary)" }}>Adversarial input</span>
             </div>
 
-            <div style={{ padding: "6px 8px", background: "rgba(239, 68, 68, 0.1)", borderRadius: "4px", border: "1px solid rgba(239, 68, 68, 0.25)" }}>
-              <div style={{ fontSize: "9.5px", color: "var(--text-muted)", fontWeight: 700 }}>02 · GATE</div>
-              <strong style={{ fontSize: "11px", color: "#f87171", display: "block", marginTop: "2px" }}>Rule Triggered</strong>
-              <span style={{ fontSize: "10px", color: "var(--text-secondary)" }}>{result.resultCode.toUpperCase()}</span>
+            <div style={{ padding: "6px 8px", background: "var(--bg-card)", borderRadius: "var(--radius-tag)", border: "1px solid var(--border-hairline)" }}>
+              <div style={{ fontSize: "10px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>02 · Trigger</div>
+              <strong style={{ fontSize: "11px", color: "var(--status-warning)", display: "block", marginTop: "2px" }}>Rule Triggered</strong>
+              <span style={{ fontSize: "10px", color: "var(--text-secondary)", fontFamily: "var(--font-mono)" }}>{result.resultCode}</span>
             </div>
 
-            <div style={{ padding: "6px 8px", background: "rgba(56, 189, 248, 0.1)", borderRadius: "4px", border: "1px solid rgba(56, 189, 248, 0.25)" }}>
-              <div style={{ fontSize: "9.5px", color: "var(--text-muted)", fontWeight: 700 }}>03 · DATABASE</div>
-              <strong style={{ fontSize: "11px", color: "#93c5fd", display: "block", marginTop: "2px" }}>10-K DB Truth</strong>
-              <span style={{ fontSize: "10px", color: "var(--text-secondary)" }}>Grounding check</span>
+            <div style={{ padding: "6px 8px", background: "var(--bg-card)", borderRadius: "var(--radius-tag)", border: "1px solid var(--border-hairline)" }}>
+              <div style={{ fontSize: "10px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>03 · DB Check</div>
+              <strong style={{ fontSize: "11px", color: "var(--text-primary)", display: "block", marginTop: "2px" }}>10-K Database</strong>
+              <span style={{ fontSize: "10px", color: "var(--text-secondary)" }}>Fact verification</span>
             </div>
 
-            <div style={{ padding: "6px 8px", background: "rgba(239, 68, 68, 0.2)", borderRadius: "4px", border: "1px solid rgba(239, 68, 68, 0.5)" }}>
-              <div style={{ fontSize: "9.5px", color: "var(--text-muted)", fontWeight: 700 }}>04 · ACTION</div>
-              <strong style={{ fontSize: "11px", color: "#ef4444", display: "block", marginTop: "2px" }}>REJECTED: {result.resultCode.toUpperCase()}</strong>
-              <span style={{ fontSize: "10px", color: "#86efac" }}>Atomic fallback engaged</span>
+            <div style={{ padding: "6px 8px", background: "var(--status-rejected-bg)", borderRadius: "var(--radius-tag)", border: "1px solid var(--status-rejected-border)" }}>
+              <div style={{ fontSize: "10px", color: "var(--status-rejected)", fontFamily: "var(--font-mono)" }}>04 · Action</div>
+              <strong style={{ fontSize: "11px", color: "var(--status-rejected)", display: "block", marginTop: "2px" }}>Rejected</strong>
+              <span style={{ fontSize: "10px", color: "var(--text-secondary)" }}>Fallback engaged</span>
             </div>
 
-            <div style={{ padding: "6px 8px", background: "rgba(16, 185, 129, 0.1)", borderRadius: "4px", border: "1px solid rgba(52, 211, 153, 0.25)" }}>
-              <div style={{ fontSize: "9.5px", color: "var(--text-muted)", fontWeight: 700 }}>05 · AUDIT LOG</div>
-              <strong style={{ fontSize: "11px", color: "#86efac", display: "block", marginTop: "2px" }}>Persisted in DB</strong>
-              <span style={{ fontSize: "10px", color: "var(--text-secondary)" }}>{result.latencyMs.toFixed(1)}ms record</span>
+            <div style={{ padding: "6px 8px", background: "var(--status-verified-bg)", borderRadius: "var(--radius-tag)", border: "1px solid var(--status-verified-border)" }}>
+              <div style={{ fontSize: "10px", color: "var(--status-verified)", fontFamily: "var(--font-mono)" }}>05 · Audit Log</div>
+              <strong style={{ fontSize: "11px", color: "var(--status-verified)", display: "block", marginTop: "2px" }}>Persisted</strong>
+              <span style={{ fontSize: "10px", color: "var(--text-secondary)" }}>{result.latencyMs.toFixed(1)}ms</span>
             </div>
           </div>
 
-          <div className="rejection-box-lines">
-            <div className="rejection-line">
-              <span className="rejection-line-prefix">[INJECTED CLAIM]:</span>
-              <span className="rejection-line-content strike">"{result.injectedClaim}"</span>
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "12px", fontFamily: "var(--font-mono)" }}>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <span style={{ color: "var(--text-muted)", width: "120px", flexShrink: 0 }}>Injected Claim:</span>
+              <span style={{ color: "var(--status-rejected)", textDecoration: "line-through" }}>"{result.injectedClaim}"</span>
             </div>
 
-            <div className="rejection-line">
-              <span className="rejection-line-prefix">[CITED REF ID]:</span>
-              <span className="rejection-line-content bad-cite">{result.citedRef}</span>
-              <span style={{ color: "var(--text-muted)", fontSize: "11px" }}>(Expected company: {result.expectedCompany})</span>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <span style={{ color: "var(--text-muted)", width: "120px", flexShrink: 0 }}>Cited Ref ID:</span>
+              <span style={{ color: "var(--status-rejected)" }}>{result.citedRef}</span>
+              <span style={{ color: "var(--text-muted)" }}>(Expected: {result.expectedCompany})</span>
             </div>
 
-            <div className="rejection-line">
-              <span className="rejection-line-prefix">[VERDICT / REASON]:</span>
-              <span className="rejection-line-content verdict-text">{result.reason}</span>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <span style={{ color: "var(--text-muted)", width: "120px", flexShrink: 0 }}>Interception Reason:</span>
+              <span style={{ color: "var(--text-primary)" }}>{result.reason}</span>
             </div>
 
-            <div className="rejection-line">
-              <span className="rejection-line-prefix">[DATABASE TRUTH]:</span>
-              <span style={{ color: "#93c5fd" }}>Verified DB Record Value = <strong>{result.actualDbValue}</strong></span>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <span style={{ color: "var(--text-muted)", width: "120px", flexShrink: 0 }}>Database Ground Truth:</span>
+              <span style={{ color: "var(--status-verified)" }}>Verified 10-K value = <strong>{result.actualDbValue}</strong></span>
             </div>
 
-            <div className="rejection-line" style={{ marginTop: "6px", paddingTop: "8px", borderTop: "1px dashed rgba(239, 68, 68, 0.3)" }}>
-              <span className="rejection-line-prefix">[ATOMIC FALLBACK]:</span>
-              <span className="rejection-line-content fallback-text">ENGAGED · Restored grounded thesis: "{result.fallbackReplacement}"</span>
-            </div>
-            <div className="rejection-line">
-              <span className="rejection-line-prefix">[VERIFIED CITATION]:</span>
-              <span style={{ color: "#86efac", fontFamily: "var(--font-mono)" }}>{result.fallbackRef} · 0 unsubstantiated tokens rendered</span>
+            <div style={{ display: "flex", gap: "8px", marginTop: "4px", paddingTop: "6px", borderTop: "1px solid var(--border-hairline)" }}>
+              <span style={{ color: "var(--text-muted)", width: "120px", flexShrink: 0 }}>Atomic Fallback:</span>
+              <span style={{ color: "var(--text-secondary)" }}>Restored grounded thesis: "{result.fallbackReplacement}"</span>
             </div>
           </div>
         </div>
