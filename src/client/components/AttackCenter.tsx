@@ -48,21 +48,50 @@ export const AttackCenter: React.FC<AttackCenterProps> = ({
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AdversarialAttackResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [apiKey, setApiKey] = useState(() =>
+    typeof window !== "undefined" ? window.localStorage.getItem("FINVESTIGATE_API_KEY") || "" : ""
+  );
+  const [showKeyConfig, setShowKeyConfig] = useState(false);
 
   const activeScenarioMeta = SCENARIOS.find((s) => s.id === selectedScenario)!;
+
+  const handleSaveKey = (newKey: string) => {
+    setApiKey(newKey);
+    if (typeof window !== "undefined") {
+      if (newKey.trim()) {
+        window.localStorage.setItem("FINVESTIGATE_API_KEY", newKey.trim());
+      } else {
+        window.localStorage.removeItem("FINVESTIGATE_API_KEY");
+      }
+    }
+  };
 
   const handleExecuteAttack = async () => {
     setLoading(true);
     setError(null);
     try {
+      const keyToUse = apiKey.trim() || (typeof window !== "undefined" ? window.localStorage.getItem("FINVESTIGATE_API_KEY") || "" : "");
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (keyToUse) {
+        headers["x-api-key"] = keyToUse;
+      }
+
       const response = await fetch(`/api/investigations/${encodeURIComponent(ticker)}/attack`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({ scenario: selectedScenario }),
       });
 
       if (!response.ok) {
-        throw new Error(`Attack API returned HTTP ${response.status}`);
+        const errJson = await response.json().catch(() => ({}));
+        if (response.status === 401) {
+          setShowKeyConfig(true);
+          throw new Error(errJson.error || "Unauthorized: Mutating endpoints require a valid API_SECRET_KEY in production mode.");
+        }
+        if (response.status === 503) {
+          throw new Error(errJson.error || "Service Unavailable: Mutation endpoints are disabled in production because API_SECRET_KEY is not configured.");
+        }
+        throw new Error(errJson.error || `Attack API returned HTTP ${response.status}`);
       }
 
       const data: AdversarialAttackResult = await response.json();
@@ -124,6 +153,15 @@ export const AttackCenter: React.FC<AttackCenterProps> = ({
             {loading ? <RefreshCwIcon size={14} className="spinning" /> : <ZapIcon size={14} />}
             <span>{loading ? "Intercepting..." : "Inject Adversarial Claim"}</span>
           </button>
+          <button
+            type="button"
+            className="export-button"
+            onClick={() => setShowKeyConfig((prev) => !prev)}
+            title="Configure API Secret Key for production mutation authentication"
+            style={{ fontSize: "12px" }}
+          >
+            <span>{apiKey ? "🔑 Auth Key Configured" : "🔑 Production Auth Key"}</span>
+          </button>
           {result && (
             <button
               type="button"
@@ -136,6 +174,48 @@ export const AttackCenter: React.FC<AttackCenterProps> = ({
           )}
         </div>
       </div>
+
+      {showKeyConfig && (
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          padding: "8px 12px",
+          background: "var(--bg-surface)",
+          border: "1px solid var(--border-hairline)",
+          borderRadius: "var(--radius-control)",
+          margin: "8px 0 12px",
+          fontSize: "12px",
+        }}>
+          <span style={{ color: "var(--text-secondary)", flexShrink: 0, fontWeight: 500 }}>API_SECRET_KEY:</span>
+          <input
+            type="password"
+            value={apiKey}
+            onChange={(e) => handleSaveKey(e.target.value)}
+            placeholder="Enter production API key (optional in development)"
+            style={{
+              flex: 1,
+              background: "var(--bg-deep)",
+              border: "1px solid var(--border-hairline)",
+              color: "var(--text-primary)",
+              padding: "5px 8px",
+              borderRadius: "4px",
+              fontFamily: "var(--font-mono)",
+              fontSize: "12px",
+            }}
+          />
+          {apiKey && (
+            <button
+              type="button"
+              className="export-button"
+              onClick={() => handleSaveKey("")}
+              style={{ padding: "4px 8px", fontSize: "11px" }}
+            >
+              Clear
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Scenario Description Sub-bar */}
       <div className="scenario-desc-bar">
