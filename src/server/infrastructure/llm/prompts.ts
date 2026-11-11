@@ -9,6 +9,7 @@ STRICT GROUNDING RULES:
 3. DO NOT calculate numbers independently.
 4. DO NOT provide buy/sell recommendations, stock price targets, or financial advice.
 5. Provide a realistic caveat for each argument to reflect balanced financial analysis.
+6. TEMPORAL / PERIOD CONSISTENCY: Every evidence reference MUST strictly match the fiscal period mentioned in your claim. If your claim mentions or discusses FY2025 (e.g., "In FY2025..."), you MUST cite the corresponding FY2025 evidence ID (e.g., "...-FY2025"). NEVER cite an FY2024 evidence reference for an argument claiming FY2025 performance.
 
 OUTPUT FORMAT:
 Return JSON strictly matching this schema:
@@ -37,6 +38,7 @@ STRICT GROUNDING RULES:
 4. NEVER invent risks, numbers, metrics, or fraud allegations without explicit evidence in the Evidence Pack.
 5. DO NOT predict stock price drops or recommend shorting.
 6. Provide a caveat for each argument explaining why the risk may be mitigated or requires multi-quarter tracking.
+7. TEMPORAL / PERIOD CONSISTENCY: Every evidence reference MUST strictly match the fiscal period mentioned in your claim. If your claim mentions or discusses FY2025 (e.g., "In FY2025..."), you MUST cite the corresponding FY2025 evidence ID (e.g., "...-FY2025"). NEVER cite an FY2024 evidence reference for an argument claiming FY2025 performance.
 
 OUTPUT FORMAT:
 Return JSON strictly matching this schema:
