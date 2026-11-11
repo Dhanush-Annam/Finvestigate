@@ -34,19 +34,11 @@ export const FindingCard: React.FC<FindingCardProps> = ({
                   <AlertTriangleIcon size={12} />
                   {finding.severity === "HIGH" ? "High Severity" : "Low Severity"}
                 </span>
-                <span style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: "11px",
-                  color: "var(--text-secondary)",
-                  background: "var(--bg-card)",
-                  border: "1px solid var(--border-hairline)",
-                  padding: "2px 8px",
-                  borderRadius: "var(--radius-tag)",
-                }}>
+                <span className="signal-pill">
                   {finding.signalName || finding.category.replace(/_/g, " ")}
                 </span>
                 {finding.threshold && (
-                  <span style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+                  <span className="threshold-hint">
                     Threshold: {finding.threshold}
                   </span>
                 )}
@@ -107,18 +99,12 @@ export const FindingCard: React.FC<FindingCardProps> = ({
             </div>
 
             {/* What to investigate next */}
-            <div style={{
-              marginTop: "14px",
-              padding: "12px 14px",
-              background: "var(--bg-card)",
-              border: "1px solid var(--border-hairline)",
-              borderRadius: "var(--radius-control)",
-            }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: 500, color: "var(--text-primary)", marginBottom: "4px" }}>
+            <div className="investigation-lead-box">
+              <div className="lead-header">
                 <SearchIcon size={14} style={{ color: "var(--accent)" }} />
                 <span>What to Investigate Next</span>
               </div>
-              <p style={{ fontSize: "12px", color: "var(--text-secondary)", margin: 0, lineHeight: 1.5 }}>
+              <p>
                 {finding.whatToInvestigateNext ||
                   "Review customer credit terms and Days Sales Outstanding (DSO) aging buckets in the 10-K footnote disclosures."}
               </p>

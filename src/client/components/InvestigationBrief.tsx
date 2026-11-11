@@ -133,9 +133,9 @@ export const InvestigationBrief: React.FC<InvestigationBriefProps> = ({
       </div>
 
       {/* The 4 Diligence Synthesis Cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
+      <div className="brief-cards-grid">
         {/* Answer 1: What Changed? */}
-        <div style={{ padding: "18px 20px", background: "var(--bg-deep)", borderRadius: "var(--radius-card)", border: "1px solid var(--border-hairline)" }}>
+        <div className="brief-answer-card">
           <span style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
             01 · Trajectory
           </span>
@@ -179,7 +179,7 @@ export const InvestigationBrief: React.FC<InvestigationBriefProps> = ({
         </div>
 
         {/* Answer 2: What Looks Suspicious? */}
-        <div style={{ padding: "18px 20px", background: "var(--bg-deep)", borderRadius: "var(--radius-card)", border: "1px solid var(--border-hairline)" }}>
+        <div className="brief-answer-card">
           <span style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
             02 · Signals
           </span>
@@ -217,7 +217,7 @@ export const InvestigationBrief: React.FC<InvestigationBriefProps> = ({
         </div>
 
         {/* Answer 3: Competing Theses */}
-        <div style={{ padding: "18px 20px", background: "var(--bg-deep)", borderRadius: "var(--radius-card)", border: "1px solid var(--border-hairline)" }}>
+        <div className="brief-answer-card">
           <span style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
             03 · Theses
           </span>
@@ -249,7 +249,7 @@ export const InvestigationBrief: React.FC<InvestigationBriefProps> = ({
         </div>
 
         {/* Answer 4: Citation Integrity */}
-        <div style={{ padding: "18px 20px", background: "var(--bg-deep)", borderRadius: "var(--radius-card)", border: "1px solid var(--border-hairline)" }}>
+        <div className="brief-answer-card">
           <span style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
             04 · Integrity
           </span>

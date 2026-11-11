@@ -77,18 +77,8 @@ export const DebatePanel: React.FC<DebatePanelProps> = ({
       {/* Dynamic Evidence-Based Conviction Drivers */}
       {((debate.judgeVerdict.bullFactors && debate.judgeVerdict.bullFactors.length > 0) ||
         (debate.judgeVerdict.bearFactors && debate.judgeVerdict.bearFactors.length > 0)) && (
-        <div style={{
-          marginBottom: "16px",
-          padding: "12px 14px",
-          background: "var(--bg-deep)",
-          border: "1px solid var(--border-hairline)",
-          borderRadius: "var(--radius-control)",
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "16px",
-          fontSize: "12px",
-        }}>
-          <div>
+        <div className="conviction-drivers-grid">
+          <div className="drivers-side">
             <div style={{ fontWeight: 500, color: "var(--status-verified)", marginBottom: "4px", display: "flex", alignItems: "center", gap: "6px" }}>
               <TrendingUpIcon size={13} />
               <span>Key Bull Fundamentals</span>
@@ -101,7 +91,7 @@ export const DebatePanel: React.FC<DebatePanelProps> = ({
               ))}
             </ul>
           </div>
-          <div>
+          <div className="drivers-side">
             <div style={{ fontWeight: 500, color: "var(--status-rejected)", marginBottom: "4px", display: "flex", alignItems: "center", gap: "6px" }}>
               <TrendingDownIcon size={13} />
               <span>Key Bear Risk Drivers</span>
@@ -137,16 +127,7 @@ export const DebatePanel: React.FC<DebatePanelProps> = ({
                     <button
                       key={eIdx}
                       type="button"
-                      style={{
-                        padding: "2px 8px",
-                        background: "var(--bg-deep)",
-                        border: "1px solid var(--border-hairline)",
-                        borderRadius: "var(--radius-tag)",
-                        fontSize: "11px",
-                        fontFamily: "var(--font-mono)",
-                        color: "var(--text-secondary)",
-                        cursor: "pointer",
-                      }}
+                      className="argument-evidence-btn"
                       onClick={() => onInspectCalculation(ev.reference)}
                       title={`Trace reference ${ev.reference}`}
                     >
@@ -183,16 +164,7 @@ export const DebatePanel: React.FC<DebatePanelProps> = ({
                     <button
                       key={eIdx}
                       type="button"
-                      style={{
-                        padding: "2px 8px",
-                        background: "var(--bg-deep)",
-                        border: "1px solid var(--border-hairline)",
-                        borderRadius: "var(--radius-tag)",
-                        fontSize: "11px",
-                        fontFamily: "var(--font-mono)",
-                        color: "var(--text-secondary)",
-                        cursor: "pointer",
-                      }}
+                      className="argument-evidence-btn"
                       onClick={() => onInspectCalculation(ev.reference)}
                       title={`Trace reference ${ev.reference}`}
                     >
@@ -242,16 +214,7 @@ export const DebatePanel: React.FC<DebatePanelProps> = ({
               <button
                 key={refId}
                 type="button"
-                style={{
-                  padding: "2px 8px",
-                  background: "var(--bg-card)",
-                  border: "1px solid var(--border-hairline)",
-                  borderRadius: "var(--radius-tag)",
-                  fontSize: "11px",
-                  fontFamily: "var(--font-mono)",
-                  color: "var(--accent)",
-                  cursor: "pointer",
-                }}
+                className="reference-chip"
                 onClick={() => onInspectCalculation(refId)}
               >
                 [{refId}]

@@ -120,13 +120,8 @@ export const InvestigationTerminal: React.FC<InvestigationTerminalProps> = ({
       {/* Investigation Status Terminal Card */}
       {investigation && (
         <section className="investigation-status-terminal" style={{ marginBottom: "28px" }} aria-label="Investigation status terminal">
-          <div style={{
-            background: "var(--bg-deep)",
-            border: "1px solid var(--border-hairline)",
-            borderRadius: "var(--radius-card)",
-            padding: "20px 24px",
-          }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px", marginBottom: "16px" }}>
+          <div className="terminal-body">
+            <div className="terminal-header">
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <TerminalIcon size={14} style={{ color: "var(--accent)" }} />
                 <span style={{ fontFamily: "var(--font-mono)", fontSize: "12px", color: "var(--text-muted)" }}>
@@ -152,41 +147,27 @@ export const InvestigationTerminal: React.FC<InvestigationTerminalProps> = ({
               )}
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "14px" }}>
-              <div style={{ background: "var(--bg-card)", padding: "12px 14px", borderRadius: "var(--radius-control)", border: "1px solid var(--border-hairline)" }}>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: "20px", fontWeight: 500, color: "var(--text-primary)" }}>
-                  {investigation.facts.length}
-                </div>
-                <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "2px" }}>
-                  Primary XBRL Facts
-                </div>
+            <div className="stat-tile-group">
+              <div className="stat-tile">
+                <div className="stat-tile-value">{investigation.facts.length}</div>
+                <div className="stat-tile-label">Primary XBRL Facts</div>
               </div>
 
-              <div style={{ background: "var(--bg-card)", padding: "12px 14px", borderRadius: "var(--radius-control)", border: "1px solid var(--border-hairline)" }}>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: "20px", fontWeight: 500, color: "var(--text-primary)" }}>
-                  {investigation.calculations.length}
-                </div>
-                <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "2px" }}>
-                  Deterministic Formulas
-                </div>
+              <div className="stat-tile">
+                <div className="stat-tile-value">{investigation.calculations.length}</div>
+                <div className="stat-tile-label">Deterministic Formulas</div>
               </div>
 
-              <div style={{ background: "var(--bg-card)", padding: "12px 14px", borderRadius: "var(--radius-control)", border: "1px solid var(--border-hairline)" }}>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: "20px", fontWeight: 500, color: "var(--status-verified)" }}>
-                  {verifiedCount}
-                </div>
-                <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "2px" }}>
-                  Verified Grounded Claims
-                </div>
+              <div className="stat-tile">
+                <div className="stat-tile-value" style={{ color: "var(--status-verified)" }}>{verifiedCount}</div>
+                <div className="stat-tile-label">Verified Grounded Claims</div>
               </div>
 
-              <div style={{ background: "var(--bg-card)", padding: "12px 14px", borderRadius: "var(--radius-control)", border: "1px solid var(--border-hairline)" }}>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: "20px", fontWeight: 500, color: verdictInfo.verdict === "CLEAR" ? "var(--status-verified)" : "var(--status-warning)" }}>
+              <div className="stat-tile">
+                <div className="stat-tile-value" style={{ color: verdictInfo.verdict === "CLEAR" ? "var(--status-verified)" : "var(--status-warning)" }}>
                   {verdictInfo.heading}
                 </div>
-                <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "2px" }}>
-                  Diligence Verdict
-                </div>
+                <div className="stat-tile-label">Diligence Verdict</div>
               </div>
             </div>
           </div>

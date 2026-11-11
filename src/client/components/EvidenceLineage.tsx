@@ -112,15 +112,10 @@ export const EvidenceLineage: React.FC<EvidenceLineageProps> = ({
         {selectedCalculation && (
           <div className="lineage-detail-card">
             {/* 4-Node Visual Evidence Lineage */}
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
-              gap: "10px",
-              marginBottom: "20px",
-            }}>
-              <div style={{ padding: "10px 12px", background: "var(--bg-card)", border: "1px solid var(--border-hairline)", borderRadius: "var(--radius-control)" }}>
-                <div style={{ fontSize: "10px", color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: "4px" }}>01 · Source</div>
-                <div style={{ fontSize: "12px", fontWeight: 500, color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+            <div className="lineage-4node-grid">
+              <div className="lineage-node">
+                <div className="node-step-label">01 · Source</div>
+                <div className="node-label truncatable" title={inputs[0]?.source || `${company} Filing`}>
                   {inputs[0]?.source || `${company} Filing`}
                 </div>
                 {inputs[0]?.sourceUrl && (
@@ -136,29 +131,25 @@ export const EvidenceLineage: React.FC<EvidenceLineageProps> = ({
                 )}
               </div>
 
-              <div style={{ padding: "10px 12px", background: "var(--bg-card)", border: "1px solid var(--border-hairline)", borderRadius: "var(--radius-control)" }}>
-                <div style={{ fontSize: "10px", color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: "4px" }}>02 · Reported Fact</div>
-                <div style={{ fontSize: "13px", fontWeight: 500, color: "var(--text-primary)", fontFamily: "var(--font-mono)" }}>
+              <div className="lineage-node">
+                <div className="node-step-label">02 · Reported Fact</div>
+                <div className="node-label">
                   {inputs[0] ? displayValue(inputs[0].value, inputs[0].unit) : "Reported Fact"}
                 </div>
-                <span style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
-                  {inputs[0]?.factId || "Fact Node"}
-                </span>
+                <span className="node-sub">{inputs[0]?.factId || "Fact Node"}</span>
               </div>
 
-              <div style={{ padding: "10px 12px", background: "var(--bg-card)", border: "1px solid var(--border-hairline)", borderRadius: "var(--radius-control)" }}>
-                <div style={{ fontSize: "10px", color: "var(--text-muted)", fontFamily: "var(--font-mono)", marginBottom: "4px" }}>03 · Formula</div>
-                <div style={{ fontSize: "12px", color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={detailedLineage?.formulaName || selectedCalculation.formula}>
+              <div className="lineage-node">
+                <div className="node-step-label">03 · Formula</div>
+                <div className="node-label truncatable" title={detailedLineage?.formulaName || selectedCalculation.formula}>
                   {detailedLineage?.formulaName || selectedCalculation.formula}
                 </div>
-                <span style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
-                  {selectedCalculation.calcId}
-                </span>
+                <span className="node-sub">{selectedCalculation.calcId}</span>
               </div>
 
-              <div style={{ padding: "10px 12px", background: "var(--status-verified-bg)", border: "1px solid var(--status-verified-border)", borderRadius: "var(--radius-control)" }}>
-                <div style={{ fontSize: "10px", color: "var(--status-verified)", fontFamily: "var(--font-mono)", marginBottom: "4px" }}>04 · Verified</div>
-                <div style={{ fontSize: "14px", fontWeight: 500, color: "var(--status-verified)", fontFamily: "var(--font-mono)" }}>
+              <div className="lineage-node verified">
+                <div className="node-step-label verified">04 · Verified</div>
+                <div className="node-label" style={{ color: "var(--status-verified)" }}>
                   {displayCalculationValue(selectedCalculation)}
                 </div>
                 <div style={{ fontSize: "11px", color: "var(--status-verified)", display: "flex", alignItems: "center", gap: "3px" }}>

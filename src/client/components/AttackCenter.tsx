@@ -138,19 +138,7 @@ export const AttackCenter: React.FC<AttackCenterProps> = ({
       </div>
 
       {/* Scenario Description Sub-bar */}
-      <div style={{
-        padding: "10px 14px",
-        background: "var(--bg-deep)",
-        borderRadius: "var(--radius-control)",
-        border: "1px solid var(--border-hairline)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        flexWrap: "wrap",
-        gap: "10px",
-        marginBottom: "16px",
-        fontSize: "12px",
-      }}>
+      <div className="scenario-desc-bar">
         <div>
           <strong style={{ color: "var(--text-primary)" }}>{activeScenarioMeta.name}:</strong>{" "}
           <span style={{ color: "var(--text-secondary)" }}>{activeScenarioMeta.desc}</span>
@@ -198,34 +186,34 @@ export const AttackCenter: React.FC<AttackCenterProps> = ({
             borderRadius: "var(--radius-control)",
             border: "1px solid var(--border-hairline)",
           }}>
-            <div style={{ padding: "6px 8px", background: "var(--bg-card)", borderRadius: "var(--radius-tag)", border: "1px solid var(--border-hairline)" }}>
-              <div style={{ fontSize: "10px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>01 · Vector</div>
-              <strong style={{ fontSize: "11px", color: "var(--status-rejected)", display: "block", marginTop: "2px" }}>AI Vector</strong>
-              <span style={{ fontSize: "10px", color: "var(--text-secondary)" }}>Adversarial input</span>
+            <div className="pipeline-step">
+              <div className="step-num">01 · Vector</div>
+              <strong className="step-label" style={{ color: "var(--status-rejected)" }}>AI Vector</strong>
+              <span className="step-detail">Adversarial input</span>
             </div>
 
-            <div style={{ padding: "6px 8px", background: "var(--bg-card)", borderRadius: "var(--radius-tag)", border: "1px solid var(--border-hairline)" }}>
-              <div style={{ fontSize: "10px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>02 · Trigger</div>
-              <strong style={{ fontSize: "11px", color: "var(--status-warning)", display: "block", marginTop: "2px" }}>Rule Triggered</strong>
-              <span style={{ fontSize: "10px", color: "var(--text-secondary)", fontFamily: "var(--font-mono)" }}>{result.resultCode}</span>
+            <div className="pipeline-step">
+              <div className="step-num">02 · Trigger</div>
+              <strong className="step-label" style={{ color: "var(--status-warning)" }}>Rule Triggered</strong>
+              <span className="step-detail" style={{ fontFamily: "var(--font-mono)" }}>{result.resultCode}</span>
             </div>
 
-            <div style={{ padding: "6px 8px", background: "var(--bg-card)", borderRadius: "var(--radius-tag)", border: "1px solid var(--border-hairline)" }}>
-              <div style={{ fontSize: "10px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>03 · DB Check</div>
-              <strong style={{ fontSize: "11px", color: "var(--text-primary)", display: "block", marginTop: "2px" }}>10-K Database</strong>
-              <span style={{ fontSize: "10px", color: "var(--text-secondary)" }}>Fact verification</span>
+            <div className="pipeline-step">
+              <div className="step-num">03 · DB Check</div>
+              <strong className="step-label" style={{ color: "var(--text-primary)" }}>10-K Database</strong>
+              <span className="step-detail">Fact verification</span>
             </div>
 
-            <div style={{ padding: "6px 8px", background: "var(--status-rejected-bg)", borderRadius: "var(--radius-tag)", border: "1px solid var(--status-rejected-border)" }}>
-              <div style={{ fontSize: "10px", color: "var(--status-rejected)", fontFamily: "var(--font-mono)" }}>04 · Action</div>
-              <strong style={{ fontSize: "11px", color: "var(--status-rejected)", display: "block", marginTop: "2px" }}>Rejected</strong>
-              <span style={{ fontSize: "10px", color: "var(--text-secondary)" }}>Fallback engaged</span>
+            <div className="pipeline-step rejected">
+              <div className="step-num" style={{ color: "var(--status-rejected)", fontFamily: "var(--font-mono)" }}>04 · Action</div>
+              <strong className="step-label" style={{ color: "var(--status-rejected)" }}>Rejected</strong>
+              <span className="step-detail">Fallback engaged</span>
             </div>
 
-            <div style={{ padding: "6px 8px", background: "var(--status-verified-bg)", borderRadius: "var(--radius-tag)", border: "1px solid var(--status-verified-border)" }}>
-              <div style={{ fontSize: "10px", color: "var(--status-verified)", fontFamily: "var(--font-mono)" }}>05 · Audit Log</div>
-              <strong style={{ fontSize: "11px", color: "var(--status-verified)", display: "block", marginTop: "2px" }}>Persisted</strong>
-              <span style={{ fontSize: "10px", color: "var(--text-secondary)" }}>{result.latencyMs.toFixed(1)}ms</span>
+            <div className="pipeline-step verified">
+              <div className="step-num" style={{ color: "var(--status-verified)", fontFamily: "var(--font-mono)" }}>05 · Audit Log</div>
+              <strong className="step-label" style={{ color: "var(--status-verified)" }}>Persisted</strong>
+              <span className="step-detail">{result.latencyMs.toFixed(1)}ms</span>
             </div>
           </div>
 
