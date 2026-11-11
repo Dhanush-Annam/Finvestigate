@@ -9,18 +9,31 @@ export async function getRepository(): Promise<InvestigationRepository> {
 
   const tursoUrl = process.env.TURSO_DATABASE_URL;
   if (tursoUrl) {
-    const { TursoAdapter } = await import("./turso-adapter.js");
-    repoInstance = new TursoAdapter({
-      url: tursoUrl,
-      authToken: process.env.TURSO_AUTH_TOKEN,
-    });
-  } else {
-    const { SqliteAdapter } = await import("./sqlite-adapter.js");
-    repoInstance = new SqliteAdapter();
+    try {
+      const { TursoAdapter } = await import("./turso-adapter.js");
+      const tursoRepo = new TursoAdapter({
+        url: tursoUrl,
+        authToken: process.env.TURSO_AUTH_TOKEN,
+      });
+      await tursoRepo.init();
+      await tursoRepo.seedCuratedData();
+      repoInstance = tursoRepo;
+      return repoInstance;
+    } catch (err) {
+      if (process.env.TURSO_STRICT === "true") {
+        throw err;
+      }
+      console.warn(
+        `[Repository Warning] Turso Cloud initialization failed (${err instanceof Error ? err.message : String(err)}). Falling back to local SQLite repository to preserve service availability.`
+      );
+    }
   }
 
-  await repoInstance.init();
-  await repoInstance.seedCuratedData();
+  const { SqliteAdapter } = await import("./sqlite-adapter.js");
+  const sqliteRepo = new SqliteAdapter();
+  await sqliteRepo.init();
+  await sqliteRepo.seedCuratedData();
+  repoInstance = sqliteRepo;
   return repoInstance;
 }
 

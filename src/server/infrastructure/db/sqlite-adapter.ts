@@ -31,7 +31,7 @@ export class SqliteAdapter implements InvestigationRepository {
           DROP TABLE IF EXISTS claim_checks;
           DROP TABLE IF EXISTS calculations;
           DROP TABLE IF EXISTS facts;
-          // Active forensic evidence deletion was eliminated. The only remaining DELETE operation is part of the legacy-schema migration path and removes obsolete seed records during migration.
+          -- Active forensic evidence deletion was eliminated. The only remaining DELETE operation is part of the legacy-schema migration path and removes obsolete seed records during migration.
           DELETE FROM investigation_runs WHERE run_type = 'seed';
         `);
       }
