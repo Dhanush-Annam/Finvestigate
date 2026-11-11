@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { Fact, Calculation, Finding, ClaimCheck, Debate } from "../../shared/types/index.js";
 import type { detectAnomalies } from "../domain/findings.js";
 import type { buildCoreCalculations } from "../domain/calculations.js";
+import type { ForensicSuiteResult } from "../domain/forensic-models.js";
 
 export const InvestigationRunSchema = z.object({
   runId: z.string(),
@@ -72,9 +73,10 @@ export interface Investigation {
   facts: Fact[];
   claimChecks: ClaimCheck[];
   findings: Finding[];
-  calculations: ReturnType<typeof buildCoreCalculations>;
+  calculations: Calculation[];
   anomalies: ReturnType<typeof detectAnomalies>;
   debate?: Debate;
+  forensics?: ForensicSuiteResult;
   isLiveMode?: boolean;
   runId?: string;
   verificationStats?: {
