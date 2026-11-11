@@ -19,7 +19,11 @@
   /* Text Roles */
   --text-primary: #ededed;
   --text-secondary: #a1a1a6;
-  --text-muted: #85858b;
+  --text-muted: #7a7a80;
+  --text-tertiary: #6a6a70;
+
+  /* Focus & Interaction */
+  --focus-ring: rgba(245, 158, 11, 0.5);
 
   /* Restrained Single Accent (Ledger Amber) */
   --accent: #f59e0b;
@@ -78,8 +82,22 @@ button {
   color: inherit;
 }
 
+/* Focus-visible outlines for keyboard accessibility */
+button:focus-visible,
+input:focus-visible,
+a:focus-visible,
+[class]:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 input {
   font-family: inherit;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 /* App Shell - Fluid desktop proportion capped at 1440px */
@@ -92,6 +110,20 @@ input {
 @media (max-width: 768px) {
   .app-shell {
     padding: 16px 16px 64px;
+  }
+}
+
+/* Print-friendly exports */
+@media print {
+  .masthead, .workflow-ribbon, .attack-card-top, .scoreboard-scope-switch, .brief-actions {
+    display: none !important;
+  }
+  body { background: #fff; color: #111; }
+  .divergence-panel, .dossier-panel, .headline-attack-card, .trust-scoreboard-card,
+  .evidence-panel, .claim-panel, .debate-court-section, .finvestigate-brief-section {
+    background: #fafafa;
+    border-color: #e5e5e5;
+    break-inside: avoid;
   }
 }
 
@@ -1493,6 +1525,346 @@ input {
   border-radius: var(--radius-control);
   color: var(--text-primary);
   transition: background-color var(--transition-fast);
+}
+
+.error-actions button:hover {
+  background: var(--bg-raised);
+}
+
+/* Investigation Status Terminal */
+.investigation-status-terminal .terminal-body {
+  background: var(--bg-deep);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-card);
+  padding: 20px 24px;
+}
+
+.terminal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.stat-tile-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.stat-tile {
+  background: var(--bg-card);
+  padding: 12px 14px;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--border-hairline);
+}
+
+.stat-tile .stat-tile-value {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.stat-tile .stat-tile-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* Panel ruled-line headers */
+.panel-ruler {
+  height: 1px;
+  background: var(--border-hairline);
+  margin: 0 0 16px;
+}
+
+.panel-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.meta-section-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.meta-invariant-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: var(--radius-tag);
+}
+
+/* Evidence Lineage 4-node row */
+.lineage-4node-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .lineage-4node-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.lineage-node {
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-control);
+}
+
+.lineage-node.verified {
+  background: var(--status-verified-bg);
+  border-color: var(--status-verified-border);
+}
+
+.node-step-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  margin-bottom: 4px;
+}
+
+.node-step-label.verified {
+  color: var(--status-verified);
+}
+
+.node-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+}
+
+.node-label.truncatable {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: inherit;
+}
+
+.node-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* Attack Center pipeline steps */
+.pipeline-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin: 12px 0 16px;
+  padding: 8px;
+  background: var(--bg-deep);
+  border-radius: var(--radius-control);
+  border: 1px solid var(--border-hairline);
+}
+
+@media (max-width: 900px) {
+  .pipeline-steps-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .pipeline-steps-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.pipeline-step {
+  padding: 6px 8px;
+  background: var(--bg-card);
+  border-radius: var(--radius-tag);
+  border: 1px solid var(--border-hairline);
+}
+
+.pipeline-step.rejected {
+  background: var(--status-rejected-bg);
+  border-color: var(--status-rejected-border);
+}
+
+.pipeline-step.verified {
+  background: var(--status-verified-bg);
+  border-color: var(--status-verified-border);
+}
+
+.step-num {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.step-label {
+  font-size: 11px;
+  font-weight: 500;
+  display: block;
+  margin-top: 2px;
+}
+
+.step-detail {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+/* Attack result fields */
+.result-field {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
+
+.result-label {
+  color: var(--text-muted);
+  width: 120px;
+  flex-shrink: 0;
+}
+
+.result-divider {
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border-hairline);
+}
+
+/* FindingCard extras */
+.signal-pill {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border-hairline);
+  padding: 2px 8px;
+  border-radius: var(--radius-tag);
+}
+
+.threshold-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.investigation-lead-box {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-control);
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.lead-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+/* DebatePanel extras */
+.conviction-drivers-grid {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-control);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  font-size: 12px;
+}
+
+@media (max-width: 640px) {
+  .conviction-drivers-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.drivers-side strong {
+  font-size: 12px;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.argument-evidence-btn {
+  padding: 2px 8px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-tag);
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.reference-chip {
+  padding: 2px 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-tag);
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--accent);
+  cursor: pointer;
+}
+
+/* AttackCenter extras */
+.scenario-desc-bar {
+  padding: 10px 14px;
+  background: var(--bg-deep);
+  border-radius: var(--radius-control);
+  border: 1px solid var(--border-hairline);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+  font-size: 12px;
+}
+
+/* InvestigationBrief extras */
+.brief-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .brief-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.brief-answer-card {
+  padding: 18px 20px;
+  background: var(--bg-deep);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border-hairline);
+}
+
+.scenario-expected-code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--status-rejected);
 }
 
 .error-actions button:hover {
