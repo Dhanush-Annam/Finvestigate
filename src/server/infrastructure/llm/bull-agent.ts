@@ -13,6 +13,34 @@ export interface AgentRunResult<T> {
   error?: string;
 }
 
+function validateBullArgumentsGrounding(
+  args: BullAgentOutput["arguments"],
+  evidenceRegistry: EvidencePack["evidenceRegistry"]
+): { ungroundedRefs: string[]; periodMismatches: string[] } {
+  const ungroundedRefs: string[] = [];
+  const periodMismatches: string[] = [];
+
+  for (const arg of args) {
+    const claimFys = Array.from(`${arg.claim} ${arg.reasoning}`.matchAll(/\bFY(20\d{2})\b/gi), (m) => m[1]);
+
+    for (const refId of arg.evidenceRefs) {
+      const entry = evidenceRegistry[refId];
+      if (!entry) {
+        ungroundedRefs.push(refId);
+      } else if (claimFys.length > 0 && entry.periodLabel) {
+        const entryFyMatch = entry.periodLabel.match(/\bFY(20\d{2})\b/i);
+        if (entryFyMatch && !claimFys.includes(entryFyMatch[1])) {
+          periodMismatches.push(
+            `Claim refers to period FY${claimFys[0]}, but cited reference "${refId}" is for period ${entry.periodLabel}`
+          );
+        }
+      }
+    }
+  }
+
+  return { ungroundedRefs, periodMismatches };
+}
+
 export async function runBullAgent(
   evidencePack: EvidencePack,
   overrideModel?: string
@@ -64,27 +92,28 @@ export async function runBullAgentWithDetails(
   }
 
   const output = parseResult.data;
-  const ungroundedRefs: string[] = [];
+  const initialCheck = validateBullArgumentsGrounding(output.arguments, evidencePack.evidenceRegistry);
 
-  // Validate every evidenceRef against EvidenceRegistry
-  for (const arg of output.arguments) {
-    for (const refId of arg.evidenceRefs) {
-      if (!evidencePack.evidenceRegistry[refId]) {
-        ungroundedRefs.push(refId);
-      }
+  // 1-Turn Automated Citation & Temporal Self-Correction Loop
+  if (initialCheck.ungroundedRefs.length > 0 || initialCheck.periodMismatches.length > 0) {
+    const errorDetails: string[] = [];
+    if (initialCheck.ungroundedRefs.length > 0) {
+      errorDetails.push(...initialCheck.ungroundedRefs.map((r) => `  - Ref "${r}" does not exist in the Evidence Pack.`));
     }
-  }
+    if (initialCheck.periodMismatches.length > 0) {
+      errorDetails.push(...initialCheck.periodMismatches.map((m) => `  - Temporal mismatch: ${m}. You must cite matching period evidence.`));
+    }
 
-  // 1-Turn Automated Citation Self-Correction Loop
-  if (ungroundedRefs.length > 0) {
-    console.warn(`[Bull Agent Registry Rejection] Un-grounded refs: ${ungroundedRefs.join(", ")}. Initiating 1-turn automated self-correction.`);
+    console.warn(`[Bull Agent Registry Rejection] Issues found:\n${errorDetails.join("\n")}. Initiating 1-turn automated self-correction.`);
 
-    const correctionPrompt = `Citation verification gate rejected your response due to ${ungroundedRefs.length} ungrounded citation reference(s):
-${ungroundedRefs.map((r) => `  - Ref "${r}" does not exist in the Evidence Pack.`).join("\n")}
+    const correctionPrompt = `Citation verification gate rejected your response due to ${errorDetails.length} citation error(s):
+${errorDetails.join("\n")}
 
 CRITICAL CORRECTION INSTRUCTION:
-Revise your arguments. You MUST ONLY cite exact reference IDs that exist in the following availableEvidence catalog:
+Revise your arguments.
+1. You MUST ONLY cite exact reference IDs that exist in the following availableEvidence catalog:
 ${JSON.stringify(evidencePack.evidenceCatalog, null, 2)}
+2. Every cited reference ID MUST match the fiscal period discussed in your claim (e.g. if discussing FY2025, cite evidence for FY2025, not FY2024).
 Respond with corrected JSON conforming to the exact schema.`;
 
     const retryResult = await callGeminiStructuredJSONWithStats<unknown>(
@@ -97,15 +126,8 @@ Respond with corrected JSON conforming to the exact schema.`;
     if (retryResult.data) {
       const retryParsed = BullAgentOutputSchema.safeParse(retryResult.data);
       if (retryParsed.success) {
-        const retryUngrounded: string[] = [];
-        for (const arg of retryParsed.data.arguments) {
-          for (const refId of arg.evidenceRefs) {
-            if (!evidencePack.evidenceRegistry[refId]) {
-              retryUngrounded.push(refId);
-            }
-          }
-        }
-        if (retryUngrounded.length === 0) {
+        const retryCheck = validateBullArgumentsGrounding(retryParsed.data.arguments, evidencePack.evidenceRegistry);
+        if (retryCheck.ungroundedRefs.length === 0 && retryCheck.periodMismatches.length === 0) {
           console.log("[Bull Agent Self-Correction] Successfully corrected citations on turn 2.");
           return {
             output: retryParsed.data,
@@ -125,9 +147,9 @@ Respond with corrected JSON conforming to the exact schema.`;
       rawJson: callResult.data,
       schemaValid: true,
       grounded: false,
-      ungroundedRefs,
+      ungroundedRefs: [...initialCheck.ungroundedRefs, ...initialCheck.periodMismatches],
       stats: callResult.stats,
-      error: `Ungrounded evidence reference IDs: ${ungroundedRefs.join(", ")}`,
+      error: `Citation errors: ${errorDetails.join("; ")}`,
     };
   }
 
