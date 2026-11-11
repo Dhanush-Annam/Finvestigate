@@ -1,5 +1,5 @@
 {
-  "timestamp": 1788355669443,
+  "timestamp": 1794327923552,
   "facts": [
     {
       "factId": "GOOGL-REVENUE-FY2023",
@@ -12,10 +12,12 @@
       },
       "value": 307394000000,
       "unit": "USD",
-      "source": "Alphabet Inc. FY2023 Form 10-K, EDGAR",
+      "source": "Alphabet Inc. FY2023 Form 10-K (Revenue from Contract with Customer, Excluding Assessed Tax), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001652044",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Revenue from Contract with Customer, Excluding Assessed Tax",
+      "accountingDefinition": "RevenueFromContractWithCustomerExcludingAssessedTax (US-GAAP)"
     },
     {
       "factId": "GOOGL-REVENUE-FY2024",
@@ -28,26 +30,12 @@
       },
       "value": 350018000000,
       "unit": "USD",
-      "source": "Alphabet Inc. FY2024 Form 10-K, EDGAR",
+      "source": "Alphabet Inc. FY2024 Form 10-K (Revenue from Contract with Customer, Excluding Assessed Tax), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001652044",
       "type": "FACT",
-      "availability": "reported"
-    },
-    {
-      "factId": "GOOGL-REVENUE-FY2025",
-      "company": "GOOGL",
-      "metric": "revenue",
-      "period": {
-        "label": "FY2025",
-        "endDate": "2025-12-31",
-        "kind": "annual"
-      },
-      "value": 402836000000,
-      "unit": "USD",
-      "source": "Alphabet Inc. FY2025 Form 10-K, EDGAR",
-      "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001652044",
-      "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Revenue from Contract with Customer, Excluding Assessed Tax",
+      "accountingDefinition": "RevenueFromContractWithCustomerExcludingAssessedTax (US-GAAP)"
     },
     {
       "factId": "GOOGL-NETINCOME-FY2023",
@@ -60,10 +48,12 @@
       },
       "value": 73795000000,
       "unit": "USD",
-      "source": "Alphabet Inc. FY2023 Form 10-K, EDGAR",
+      "source": "Alphabet Inc. FY2023 Form 10-K (Net Income (Loss) Attributable to Parent), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001652044",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Income (Loss) Attributable to Parent",
+      "accountingDefinition": "NetIncomeLoss (US-GAAP)"
     },
     {
       "factId": "GOOGL-NETINCOME-FY2024",
@@ -76,10 +66,12 @@
       },
       "value": 100118000000,
       "unit": "USD",
-      "source": "Alphabet Inc. FY2024 Form 10-K, EDGAR",
+      "source": "Alphabet Inc. FY2024 Form 10-K (Net Income (Loss) Attributable to Parent), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001652044",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Income (Loss) Attributable to Parent",
+      "accountingDefinition": "NetIncomeLoss (US-GAAP)"
     },
     {
       "factId": "GOOGL-NETINCOME-FY2025",
@@ -92,10 +84,12 @@
       },
       "value": 132170000000,
       "unit": "USD",
-      "source": "Alphabet Inc. FY2025 Form 10-K, EDGAR",
+      "source": "Alphabet Inc. FY2025 Form 10-K (Net Income (Loss) Attributable to Parent), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001652044",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Income (Loss) Attributable to Parent",
+      "accountingDefinition": "NetIncomeLoss (US-GAAP)"
     },
     {
       "factId": "GOOGL-OPERATINGCASHFLOW-FY2023",
@@ -108,10 +102,12 @@
       },
       "value": 101746000000,
       "unit": "USD",
-      "source": "Alphabet Inc. FY2023 Form 10-K, EDGAR",
+      "source": "Alphabet Inc. FY2023 Form 10-K (Net Cash Provided by (Used in) Operating Activities), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001652044",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Cash Provided by (Used in) Operating Activities",
+      "accountingDefinition": "NetCashProvidedByUsedInOperatingActivities (US-GAAP)"
     },
     {
       "factId": "GOOGL-OPERATINGCASHFLOW-FY2024",
@@ -124,10 +120,12 @@
       },
       "value": 125299000000,
       "unit": "USD",
-      "source": "Alphabet Inc. FY2024 Form 10-K, EDGAR",
+      "source": "Alphabet Inc. FY2024 Form 10-K (Net Cash Provided by (Used in) Operating Activities), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001652044",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Cash Provided by (Used in) Operating Activities",
+      "accountingDefinition": "NetCashProvidedByUsedInOperatingActivities (US-GAAP)"
     },
     {
       "factId": "GOOGL-OPERATINGCASHFLOW-FY2025",
@@ -140,10 +138,12 @@
       },
       "value": 164713000000,
       "unit": "USD",
-      "source": "Alphabet Inc. FY2025 Form 10-K, EDGAR",
+      "source": "Alphabet Inc. FY2025 Form 10-K (Net Cash Provided by (Used in) Operating Activities), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001652044",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Cash Provided by (Used in) Operating Activities",
+      "accountingDefinition": "NetCashProvidedByUsedInOperatingActivities (US-GAAP)"
     },
     {
       "factId": "GOOGL-RECEIVABLES-FY2023",
@@ -156,10 +156,12 @@
       },
       "value": 47964000000,
       "unit": "USD",
-      "source": "Alphabet Inc. FY2023 Form 10-K, EDGAR",
+      "source": "Alphabet Inc. FY2023 Form 10-K (Accounts Receivable, after Allowance for Credit Loss, Current), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001652044",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Accounts Receivable, after Allowance for Credit Loss, Current",
+      "accountingDefinition": "AccountsReceivableNetCurrent (US-GAAP)"
     },
     {
       "factId": "GOOGL-RECEIVABLES-FY2024",
@@ -172,10 +174,12 @@
       },
       "value": 52340000000,
       "unit": "USD",
-      "source": "Alphabet Inc. FY2024 Form 10-K, EDGAR",
+      "source": "Alphabet Inc. FY2024 Form 10-K (Accounts Receivable, after Allowance for Credit Loss, Current), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001652044",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Accounts Receivable, after Allowance for Credit Loss, Current",
+      "accountingDefinition": "AccountsReceivableNetCurrent (US-GAAP)"
     },
     {
       "factId": "GOOGL-RECEIVABLES-FY2025",
@@ -188,10 +192,12 @@
       },
       "value": 62886000000,
       "unit": "USD",
-      "source": "Alphabet Inc. FY2025 Form 10-K, EDGAR",
+      "source": "Alphabet Inc. FY2025 Form 10-K (Accounts Receivable, after Allowance for Credit Loss, Current), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001652044",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Accounts Receivable, after Allowance for Credit Loss, Current",
+      "accountingDefinition": "AccountsReceivableNetCurrent (US-GAAP)"
     },
     {
       "factId": "GOOGL-CAPEX-FY2023",
@@ -204,10 +210,12 @@
       },
       "value": 32251000000,
       "unit": "USD",
-      "source": "Alphabet Inc. FY2023 Form 10-K, EDGAR",
+      "source": "Alphabet Inc. FY2023 Form 10-K (Payments to Acquire Property, Plant, and Equipment), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001652044",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Payments to Acquire Property, Plant, and Equipment",
+      "accountingDefinition": "PaymentsToAcquirePropertyPlantAndEquipment (US-GAAP)"
     },
     {
       "factId": "GOOGL-CAPEX-FY2024",
@@ -220,10 +228,12 @@
       },
       "value": 52535000000,
       "unit": "USD",
-      "source": "Alphabet Inc. FY2024 Form 10-K, EDGAR",
+      "source": "Alphabet Inc. FY2024 Form 10-K (Payments to Acquire Property, Plant, and Equipment), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001652044",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Payments to Acquire Property, Plant, and Equipment",
+      "accountingDefinition": "PaymentsToAcquirePropertyPlantAndEquipment (US-GAAP)"
     },
     {
       "factId": "GOOGL-CAPEX-FY2025",
@@ -236,10 +246,12 @@
       },
       "value": 91447000000,
       "unit": "USD",
-      "source": "Alphabet Inc. FY2025 Form 10-K, EDGAR",
+      "source": "Alphabet Inc. FY2025 Form 10-K (Payments to Acquire Property, Plant, and Equipment), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001652044",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Payments to Acquire Property, Plant, and Equipment",
+      "accountingDefinition": "PaymentsToAcquirePropertyPlantAndEquipment (US-GAAP)"
     }
   ]
 }

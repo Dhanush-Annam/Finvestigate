@@ -1,6 +1,60 @@
 {
-  "timestamp": 1788355670747,
+  "timestamp": 1794327923931,
   "facts": [
+    {
+      "factId": "INTC-REVENUE-FY2023",
+      "company": "INTC",
+      "metric": "revenue",
+      "period": {
+        "label": "FY2023",
+        "endDate": "2023-12-30",
+        "kind": "annual"
+      },
+      "value": 54228000000,
+      "unit": "USD",
+      "source": "INTEL CORP FY2023 Form 10-K (Revenue from Contract with Customer, Excluding Assessed Tax), EDGAR",
+      "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000050863",
+      "type": "FACT",
+      "availability": "reported",
+      "lineItem": "Revenue from Contract with Customer, Excluding Assessed Tax",
+      "accountingDefinition": "RevenueFromContractWithCustomerExcludingAssessedTax (US-GAAP)"
+    },
+    {
+      "factId": "INTC-REVENUE-FY2024",
+      "company": "INTC",
+      "metric": "revenue",
+      "period": {
+        "label": "FY2024",
+        "endDate": "2024-12-28",
+        "kind": "annual"
+      },
+      "value": 53101000000,
+      "unit": "USD",
+      "source": "INTEL CORP FY2024 Form 10-K (Revenue from Contract with Customer, Excluding Assessed Tax), EDGAR",
+      "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000050863",
+      "type": "FACT",
+      "availability": "reported",
+      "lineItem": "Revenue from Contract with Customer, Excluding Assessed Tax",
+      "accountingDefinition": "RevenueFromContractWithCustomerExcludingAssessedTax (US-GAAP)"
+    },
+    {
+      "factId": "INTC-REVENUE-FY2025",
+      "company": "INTC",
+      "metric": "revenue",
+      "period": {
+        "label": "FY2025",
+        "endDate": "2025-12-27",
+        "kind": "annual"
+      },
+      "value": 52853000000,
+      "unit": "USD",
+      "source": "INTEL CORP FY2025 Form 10-K (Revenue from Contract with Customer, Excluding Assessed Tax), EDGAR",
+      "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000050863",
+      "type": "FACT",
+      "availability": "reported",
+      "lineItem": "Revenue from Contract with Customer, Excluding Assessed Tax",
+      "accountingDefinition": "RevenueFromContractWithCustomerExcludingAssessedTax (US-GAAP)"
+    },
     {
       "factId": "INTC-NETINCOME-FY2023",
       "company": "INTC",
@@ -12,10 +66,12 @@
       },
       "value": 1689000000,
       "unit": "USD",
-      "source": "INTEL CORP FY2023 Form 10-K, EDGAR",
+      "source": "INTEL CORP FY2023 Form 10-K (Net Income (Loss) Attributable to Parent), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000050863",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Income (Loss) Attributable to Parent",
+      "accountingDefinition": "NetIncomeLoss (US-GAAP)"
     },
     {
       "factId": "INTC-NETINCOME-FY2024",
@@ -28,10 +84,12 @@
       },
       "value": -18756000000,
       "unit": "USD",
-      "source": "INTEL CORP FY2024 Form 10-K, EDGAR",
+      "source": "INTEL CORP FY2024 Form 10-K (Net Income (Loss) Attributable to Parent), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000050863",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Income (Loss) Attributable to Parent",
+      "accountingDefinition": "NetIncomeLoss (US-GAAP)"
     },
     {
       "factId": "INTC-NETINCOME-FY2025",
@@ -44,10 +102,12 @@
       },
       "value": -267000000,
       "unit": "USD",
-      "source": "INTEL CORP FY2025 Form 10-K, EDGAR",
+      "source": "INTEL CORP FY2025 Form 10-K (Net Income (Loss) Attributable to Parent), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000050863",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Income (Loss) Attributable to Parent",
+      "accountingDefinition": "NetIncomeLoss (US-GAAP)"
     },
     {
       "factId": "INTC-OPERATINGCASHFLOW-FY2023",
@@ -60,10 +120,12 @@
       },
       "value": 11471000000,
       "unit": "USD",
-      "source": "INTEL CORP FY2023 Form 10-K, EDGAR",
+      "source": "INTEL CORP FY2023 Form 10-K (Net Cash Provided by (Used in) Operating Activities), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000050863",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Cash Provided by (Used in) Operating Activities",
+      "accountingDefinition": "NetCashProvidedByUsedInOperatingActivities (US-GAAP)"
     },
     {
       "factId": "INTC-OPERATINGCASHFLOW-FY2024",
@@ -76,10 +138,12 @@
       },
       "value": 8288000000,
       "unit": "USD",
-      "source": "INTEL CORP FY2024 Form 10-K, EDGAR",
+      "source": "INTEL CORP FY2024 Form 10-K (Net Cash Provided by (Used in) Operating Activities), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000050863",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Cash Provided by (Used in) Operating Activities",
+      "accountingDefinition": "NetCashProvidedByUsedInOperatingActivities (US-GAAP)"
     },
     {
       "factId": "INTC-OPERATINGCASHFLOW-FY2025",
@@ -92,10 +156,12 @@
       },
       "value": 9697000000,
       "unit": "USD",
-      "source": "INTEL CORP FY2025 Form 10-K, EDGAR",
+      "source": "INTEL CORP FY2025 Form 10-K (Net Cash Provided by (Used in) Operating Activities), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000050863",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Cash Provided by (Used in) Operating Activities",
+      "accountingDefinition": "NetCashProvidedByUsedInOperatingActivities (US-GAAP)"
     },
     {
       "factId": "INTC-RECEIVABLES-FY2023",
@@ -108,10 +174,12 @@
       },
       "value": 3402000000,
       "unit": "USD",
-      "source": "INTEL CORP FY2023 Form 10-K, EDGAR",
+      "source": "INTEL CORP FY2023 Form 10-K (Accounts Receivable, after Allowance for Credit Loss, Current), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000050863",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Accounts Receivable, after Allowance for Credit Loss, Current",
+      "accountingDefinition": "AccountsReceivableNetCurrent (US-GAAP)"
     },
     {
       "factId": "INTC-RECEIVABLES-FY2024",
@@ -124,10 +192,12 @@
       },
       "value": 3478000000,
       "unit": "USD",
-      "source": "INTEL CORP FY2024 Form 10-K, EDGAR",
+      "source": "INTEL CORP FY2024 Form 10-K (Accounts Receivable, after Allowance for Credit Loss, Current), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000050863",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Accounts Receivable, after Allowance for Credit Loss, Current",
+      "accountingDefinition": "AccountsReceivableNetCurrent (US-GAAP)"
     },
     {
       "factId": "INTC-RECEIVABLES-FY2025",
@@ -140,10 +210,12 @@
       },
       "value": 3839000000,
       "unit": "USD",
-      "source": "INTEL CORP FY2025 Form 10-K, EDGAR",
+      "source": "INTEL CORP FY2025 Form 10-K (Accounts Receivable, after Allowance for Credit Loss, Current), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000050863",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Accounts Receivable, after Allowance for Credit Loss, Current",
+      "accountingDefinition": "AccountsReceivableNetCurrent (US-GAAP)"
     },
     {
       "factId": "INTC-CAPEX-FY2023",
@@ -156,10 +228,12 @@
       },
       "value": 25750000000,
       "unit": "USD",
-      "source": "INTEL CORP FY2023 Form 10-K, EDGAR",
+      "source": "INTEL CORP FY2023 Form 10-K (Payments to Acquire Property, Plant, and Equipment), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000050863",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Payments to Acquire Property, Plant, and Equipment",
+      "accountingDefinition": "PaymentsToAcquirePropertyPlantAndEquipment (US-GAAP)"
     },
     {
       "factId": "INTC-CAPEX-FY2024",
@@ -172,10 +246,12 @@
       },
       "value": 23944000000,
       "unit": "USD",
-      "source": "INTEL CORP FY2024 Form 10-K, EDGAR",
+      "source": "INTEL CORP FY2024 Form 10-K (Payments to Acquire Property, Plant, and Equipment), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000050863",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Payments to Acquire Property, Plant, and Equipment",
+      "accountingDefinition": "PaymentsToAcquirePropertyPlantAndEquipment (US-GAAP)"
     },
     {
       "factId": "INTC-CAPEX-FY2025",
@@ -188,10 +264,12 @@
       },
       "value": 14646000000,
       "unit": "USD",
-      "source": "INTEL CORP FY2025 Form 10-K, EDGAR",
+      "source": "INTEL CORP FY2025 Form 10-K (Payments to Acquire Property, Plant, and Equipment), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000050863",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Payments to Acquire Property, Plant, and Equipment",
+      "accountingDefinition": "PaymentsToAcquirePropertyPlantAndEquipment (US-GAAP)"
     }
   ]
 }

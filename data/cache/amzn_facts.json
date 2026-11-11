@@ -1,6 +1,60 @@
 {
-  "timestamp": 1788355667876,
+  "timestamp": 1794327923013,
   "facts": [
+    {
+      "factId": "AMZN-REVENUE-FY2023",
+      "company": "AMZN",
+      "metric": "revenue",
+      "period": {
+        "label": "FY2023",
+        "endDate": "2023-12-31",
+        "kind": "annual"
+      },
+      "value": 574785000000,
+      "unit": "USD",
+      "source": "AMAZON COM INC FY2023 Form 10-K (Revenue from Contract with Customer, Excluding Assessed Tax), EDGAR",
+      "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001018724",
+      "type": "FACT",
+      "availability": "reported",
+      "lineItem": "Revenue from Contract with Customer, Excluding Assessed Tax",
+      "accountingDefinition": "RevenueFromContractWithCustomerExcludingAssessedTax (US-GAAP)"
+    },
+    {
+      "factId": "AMZN-REVENUE-FY2024",
+      "company": "AMZN",
+      "metric": "revenue",
+      "period": {
+        "label": "FY2024",
+        "endDate": "2024-12-31",
+        "kind": "annual"
+      },
+      "value": 637959000000,
+      "unit": "USD",
+      "source": "AMAZON COM INC FY2024 Form 10-K (Revenue from Contract with Customer, Excluding Assessed Tax), EDGAR",
+      "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001018724",
+      "type": "FACT",
+      "availability": "reported",
+      "lineItem": "Revenue from Contract with Customer, Excluding Assessed Tax",
+      "accountingDefinition": "RevenueFromContractWithCustomerExcludingAssessedTax (US-GAAP)"
+    },
+    {
+      "factId": "AMZN-REVENUE-FY2025",
+      "company": "AMZN",
+      "metric": "revenue",
+      "period": {
+        "label": "FY2025",
+        "endDate": "2025-12-31",
+        "kind": "annual"
+      },
+      "value": 716924000000,
+      "unit": "USD",
+      "source": "AMAZON COM INC FY2025 Form 10-K (Revenue from Contract with Customer, Excluding Assessed Tax), EDGAR",
+      "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001018724",
+      "type": "FACT",
+      "availability": "reported",
+      "lineItem": "Revenue from Contract with Customer, Excluding Assessed Tax",
+      "accountingDefinition": "RevenueFromContractWithCustomerExcludingAssessedTax (US-GAAP)"
+    },
     {
       "factId": "AMZN-NETINCOME-FY2023",
       "company": "AMZN",
@@ -12,10 +66,12 @@
       },
       "value": 30425000000,
       "unit": "USD",
-      "source": "AMAZON COM INC FY2023 Form 10-K, EDGAR",
+      "source": "AMAZON COM INC FY2023 Form 10-K (Net Income (Loss) Attributable to Parent), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001018724",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Income (Loss) Attributable to Parent",
+      "accountingDefinition": "NetIncomeLoss (US-GAAP)"
     },
     {
       "factId": "AMZN-NETINCOME-FY2024",
@@ -28,10 +84,12 @@
       },
       "value": 59248000000,
       "unit": "USD",
-      "source": "AMAZON COM INC FY2024 Form 10-K, EDGAR",
+      "source": "AMAZON COM INC FY2024 Form 10-K (Net Income (Loss) Attributable to Parent), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001018724",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Income (Loss) Attributable to Parent",
+      "accountingDefinition": "NetIncomeLoss (US-GAAP)"
     },
     {
       "factId": "AMZN-NETINCOME-FY2025",
@@ -44,10 +102,12 @@
       },
       "value": 77670000000,
       "unit": "USD",
-      "source": "AMAZON COM INC FY2025 Form 10-K, EDGAR",
+      "source": "AMAZON COM INC FY2025 Form 10-K (Net Income (Loss) Attributable to Parent), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001018724",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Income (Loss) Attributable to Parent",
+      "accountingDefinition": "NetIncomeLoss (US-GAAP)"
     },
     {
       "factId": "AMZN-OPERATINGCASHFLOW-FY2023",
@@ -60,10 +120,12 @@
       },
       "value": 84946000000,
       "unit": "USD",
-      "source": "AMAZON COM INC FY2023 Form 10-K, EDGAR",
+      "source": "AMAZON COM INC FY2023 Form 10-K (Net Cash Provided by (Used in) Operating Activities), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001018724",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Cash Provided by (Used in) Operating Activities",
+      "accountingDefinition": "NetCashProvidedByUsedInOperatingActivities (US-GAAP)"
     },
     {
       "factId": "AMZN-OPERATINGCASHFLOW-FY2024",
@@ -76,10 +138,12 @@
       },
       "value": 115877000000,
       "unit": "USD",
-      "source": "AMAZON COM INC FY2024 Form 10-K, EDGAR",
+      "source": "AMAZON COM INC FY2024 Form 10-K (Net Cash Provided by (Used in) Operating Activities), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001018724",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Cash Provided by (Used in) Operating Activities",
+      "accountingDefinition": "NetCashProvidedByUsedInOperatingActivities (US-GAAP)"
     },
     {
       "factId": "AMZN-OPERATINGCASHFLOW-FY2025",
@@ -92,10 +156,12 @@
       },
       "value": 139514000000,
       "unit": "USD",
-      "source": "AMAZON COM INC FY2025 Form 10-K, EDGAR",
+      "source": "AMAZON COM INC FY2025 Form 10-K (Net Cash Provided by (Used in) Operating Activities), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001018724",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Cash Provided by (Used in) Operating Activities",
+      "accountingDefinition": "NetCashProvidedByUsedInOperatingActivities (US-GAAP)"
     },
     {
       "factId": "AMZN-RECEIVABLES-FY2023",
@@ -108,10 +174,12 @@
       },
       "value": 52253000000,
       "unit": "USD",
-      "source": "AMAZON COM INC FY2023 Form 10-K, EDGAR",
+      "source": "AMAZON COM INC FY2023 Form 10-K (Accounts Receivable, after Allowance for Credit Loss, Current), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001018724",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Accounts Receivable, after Allowance for Credit Loss, Current",
+      "accountingDefinition": "AccountsReceivableNetCurrent (US-GAAP)"
     },
     {
       "factId": "AMZN-RECEIVABLES-FY2024",
@@ -124,10 +192,12 @@
       },
       "value": 55451000000,
       "unit": "USD",
-      "source": "AMAZON COM INC FY2024 Form 10-K, EDGAR",
+      "source": "AMAZON COM INC FY2024 Form 10-K (Accounts Receivable, after Allowance for Credit Loss, Current), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001018724",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Accounts Receivable, after Allowance for Credit Loss, Current",
+      "accountingDefinition": "AccountsReceivableNetCurrent (US-GAAP)"
     },
     {
       "factId": "AMZN-RECEIVABLES-FY2025",
@@ -140,10 +210,12 @@
       },
       "value": 67729000000,
       "unit": "USD",
-      "source": "AMAZON COM INC FY2025 Form 10-K, EDGAR",
+      "source": "AMAZON COM INC FY2025 Form 10-K (Accounts Receivable, after Allowance for Credit Loss, Current), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001018724",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Accounts Receivable, after Allowance for Credit Loss, Current",
+      "accountingDefinition": "AccountsReceivableNetCurrent (US-GAAP)"
     }
   ]
 }

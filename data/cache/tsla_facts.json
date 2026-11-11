@@ -1,5 +1,5 @@
 {
-  "timestamp": 1788354741595,
+  "timestamp": 1794327924324,
   "facts": [
     {
       "factId": "TSLA-REVENUE-FY2023",
@@ -12,10 +12,12 @@
       },
       "value": 96773000000,
       "unit": "USD",
-      "source": "Tesla, Inc. FY2023 Form 10-K, EDGAR",
+      "source": "Tesla, Inc. FY2023 Form 10-K (Revenue from Contract with Customer, Excluding Assessed Tax), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001318605",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Revenue from Contract with Customer, Excluding Assessed Tax",
+      "accountingDefinition": "RevenueFromContractWithCustomerExcludingAssessedTax (US-GAAP)"
     },
     {
       "factId": "TSLA-REVENUE-FY2024",
@@ -28,10 +30,12 @@
       },
       "value": 97690000000,
       "unit": "USD",
-      "source": "Tesla, Inc. FY2024 Form 10-K, EDGAR",
+      "source": "Tesla, Inc. FY2024 Form 10-K (Revenue from Contract with Customer, Excluding Assessed Tax), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001318605",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Revenue from Contract with Customer, Excluding Assessed Tax",
+      "accountingDefinition": "RevenueFromContractWithCustomerExcludingAssessedTax (US-GAAP)"
     },
     {
       "factId": "TSLA-REVENUE-FY2025",
@@ -44,10 +48,12 @@
       },
       "value": 94827000000,
       "unit": "USD",
-      "source": "Tesla, Inc. FY2025 Form 10-K, EDGAR",
+      "source": "Tesla, Inc. FY2025 Form 10-K (Revenue from Contract with Customer, Excluding Assessed Tax), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001318605",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Revenue from Contract with Customer, Excluding Assessed Tax",
+      "accountingDefinition": "RevenueFromContractWithCustomerExcludingAssessedTax (US-GAAP)"
     },
     {
       "factId": "TSLA-NETINCOME-FY2023",
@@ -60,10 +66,12 @@
       },
       "value": 14997000000,
       "unit": "USD",
-      "source": "Tesla, Inc. FY2023 Form 10-K, EDGAR",
+      "source": "Tesla, Inc. FY2023 Form 10-K (Net Income (Loss) Attributable to Parent), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001318605",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Income (Loss) Attributable to Parent",
+      "accountingDefinition": "NetIncomeLoss (US-GAAP)"
     },
     {
       "factId": "TSLA-NETINCOME-FY2024",
@@ -76,10 +84,12 @@
       },
       "value": 7091000000,
       "unit": "USD",
-      "source": "Tesla, Inc. FY2024 Form 10-K, EDGAR",
+      "source": "Tesla, Inc. FY2024 Form 10-K (Net Income (Loss) Attributable to Parent), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001318605",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Income (Loss) Attributable to Parent",
+      "accountingDefinition": "NetIncomeLoss (US-GAAP)"
     },
     {
       "factId": "TSLA-NETINCOME-FY2025",
@@ -92,10 +102,12 @@
       },
       "value": 3794000000,
       "unit": "USD",
-      "source": "Tesla, Inc. FY2025 Form 10-K, EDGAR",
+      "source": "Tesla, Inc. FY2025 Form 10-K (Net Income (Loss) Attributable to Parent), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001318605",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Income (Loss) Attributable to Parent",
+      "accountingDefinition": "NetIncomeLoss (US-GAAP)"
     },
     {
       "factId": "TSLA-OPERATINGCASHFLOW-FY2023",
@@ -108,10 +120,12 @@
       },
       "value": 13256000000,
       "unit": "USD",
-      "source": "Tesla, Inc. FY2023 Form 10-K, EDGAR",
+      "source": "Tesla, Inc. FY2023 Form 10-K (Net Cash Provided by (Used in) Operating Activities), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001318605",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Cash Provided by (Used in) Operating Activities",
+      "accountingDefinition": "NetCashProvidedByUsedInOperatingActivities (US-GAAP)"
     },
     {
       "factId": "TSLA-OPERATINGCASHFLOW-FY2024",
@@ -124,10 +138,12 @@
       },
       "value": 14923000000,
       "unit": "USD",
-      "source": "Tesla, Inc. FY2024 Form 10-K, EDGAR",
+      "source": "Tesla, Inc. FY2024 Form 10-K (Net Cash Provided by (Used in) Operating Activities), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001318605",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Cash Provided by (Used in) Operating Activities",
+      "accountingDefinition": "NetCashProvidedByUsedInOperatingActivities (US-GAAP)"
     },
     {
       "factId": "TSLA-OPERATINGCASHFLOW-FY2025",
@@ -140,10 +156,12 @@
       },
       "value": 14747000000,
       "unit": "USD",
-      "source": "Tesla, Inc. FY2025 Form 10-K, EDGAR",
+      "source": "Tesla, Inc. FY2025 Form 10-K (Net Cash Provided by (Used in) Operating Activities), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001318605",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Cash Provided by (Used in) Operating Activities",
+      "accountingDefinition": "NetCashProvidedByUsedInOperatingActivities (US-GAAP)"
     },
     {
       "factId": "TSLA-RECEIVABLES-FY2023",
@@ -156,10 +174,12 @@
       },
       "value": 3508000000,
       "unit": "USD",
-      "source": "Tesla, Inc. FY2023 Form 10-K, EDGAR",
+      "source": "Tesla, Inc. FY2023 Form 10-K (Accounts Receivable, after Allowance for Credit Loss, Current), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001318605",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Accounts Receivable, after Allowance for Credit Loss, Current",
+      "accountingDefinition": "AccountsReceivableNetCurrent (US-GAAP)"
     },
     {
       "factId": "TSLA-RECEIVABLES-FY2024",
@@ -172,10 +192,12 @@
       },
       "value": 4418000000,
       "unit": "USD",
-      "source": "Tesla, Inc. FY2024 Form 10-K, EDGAR",
+      "source": "Tesla, Inc. FY2024 Form 10-K (Accounts Receivable, after Allowance for Credit Loss, Current), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001318605",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Accounts Receivable, after Allowance for Credit Loss, Current",
+      "accountingDefinition": "AccountsReceivableNetCurrent (US-GAAP)"
     },
     {
       "factId": "TSLA-RECEIVABLES-FY2025",
@@ -188,10 +210,12 @@
       },
       "value": 4576000000,
       "unit": "USD",
-      "source": "Tesla, Inc. FY2025 Form 10-K, EDGAR",
+      "source": "Tesla, Inc. FY2025 Form 10-K (Accounts Receivable, after Allowance for Credit Loss, Current), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001318605",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Accounts Receivable, after Allowance for Credit Loss, Current",
+      "accountingDefinition": "AccountsReceivableNetCurrent (US-GAAP)"
     },
     {
       "factId": "TSLA-CAPEX-FY2023",
@@ -204,10 +228,12 @@
       },
       "value": 8899000000,
       "unit": "USD",
-      "source": "Tesla, Inc. FY2023 Form 10-K, EDGAR",
+      "source": "Tesla, Inc. FY2023 Form 10-K (Payments to Acquire Property, Plant, and Equipment), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001318605",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Payments to Acquire Property, Plant, and Equipment",
+      "accountingDefinition": "PaymentsToAcquirePropertyPlantAndEquipment (US-GAAP)"
     },
     {
       "factId": "TSLA-CAPEX-FY2024",
@@ -220,10 +246,12 @@
       },
       "value": 11342000000,
       "unit": "USD",
-      "source": "Tesla, Inc. FY2024 Form 10-K, EDGAR",
+      "source": "Tesla, Inc. FY2024 Form 10-K (Payments to Acquire Property, Plant, and Equipment), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001318605",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Payments to Acquire Property, Plant, and Equipment",
+      "accountingDefinition": "PaymentsToAcquirePropertyPlantAndEquipment (US-GAAP)"
     },
     {
       "factId": "TSLA-CAPEX-FY2025",
@@ -236,10 +264,12 @@
       },
       "value": 8527000000,
       "unit": "USD",
-      "source": "Tesla, Inc. FY2025 Form 10-K, EDGAR",
+      "source": "Tesla, Inc. FY2025 Form 10-K (Payments to Acquire Property, Plant, and Equipment), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0001318605",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Payments to Acquire Property, Plant, and Equipment",
+      "accountingDefinition": "PaymentsToAcquirePropertyPlantAndEquipment (US-GAAP)"
     }
   ]
 }

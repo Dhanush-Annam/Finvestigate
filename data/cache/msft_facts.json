@@ -1,6 +1,78 @@
 {
-  "timestamp": 1788352650551,
+  "timestamp": 1794327922307,
   "facts": [
+    {
+      "factId": "MSFT-REVENUE-FY2023",
+      "company": "MSFT",
+      "metric": "revenue",
+      "period": {
+        "label": "FY2023",
+        "endDate": "2023-06-30",
+        "kind": "annual"
+      },
+      "value": 211915000000,
+      "unit": "USD",
+      "source": "MICROSOFT CORP FY2023 Form 10-K (Revenue from Contract with Customer, Excluding Assessed Tax), EDGAR",
+      "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000789019",
+      "type": "FACT",
+      "availability": "reported",
+      "lineItem": "Revenue from Contract with Customer, Excluding Assessed Tax",
+      "accountingDefinition": "RevenueFromContractWithCustomerExcludingAssessedTax (US-GAAP)"
+    },
+    {
+      "factId": "MSFT-REVENUE-FY2024",
+      "company": "MSFT",
+      "metric": "revenue",
+      "period": {
+        "label": "FY2024",
+        "endDate": "2024-06-30",
+        "kind": "annual"
+      },
+      "value": 245122000000,
+      "unit": "USD",
+      "source": "MICROSOFT CORP FY2024 Form 10-K (Revenue from Contract with Customer, Excluding Assessed Tax), EDGAR",
+      "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000789019",
+      "type": "FACT",
+      "availability": "reported",
+      "lineItem": "Revenue from Contract with Customer, Excluding Assessed Tax",
+      "accountingDefinition": "RevenueFromContractWithCustomerExcludingAssessedTax (US-GAAP)"
+    },
+    {
+      "factId": "MSFT-REVENUE-FY2025",
+      "company": "MSFT",
+      "metric": "revenue",
+      "period": {
+        "label": "FY2025",
+        "endDate": "2025-06-30",
+        "kind": "annual"
+      },
+      "value": 281724000000,
+      "unit": "USD",
+      "source": "MICROSOFT CORP FY2025 Form 10-K (Revenue from Contract with Customer, Excluding Assessed Tax), EDGAR",
+      "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000789019",
+      "type": "FACT",
+      "availability": "reported",
+      "lineItem": "Revenue from Contract with Customer, Excluding Assessed Tax",
+      "accountingDefinition": "RevenueFromContractWithCustomerExcludingAssessedTax (US-GAAP)"
+    },
+    {
+      "factId": "MSFT-REVENUE-FY2026",
+      "company": "MSFT",
+      "metric": "revenue",
+      "period": {
+        "label": "FY2026",
+        "endDate": "2026-06-30",
+        "kind": "annual"
+      },
+      "value": 331839000000,
+      "unit": "USD",
+      "source": "MICROSOFT CORP FY2026 Form 10-K (Revenue from Contract with Customer, Excluding Assessed Tax), EDGAR",
+      "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000789019",
+      "type": "FACT",
+      "availability": "reported",
+      "lineItem": "Revenue from Contract with Customer, Excluding Assessed Tax",
+      "accountingDefinition": "RevenueFromContractWithCustomerExcludingAssessedTax (US-GAAP)"
+    },
     {
       "factId": "MSFT-NETINCOME-FY2023",
       "company": "MSFT",
@@ -12,10 +84,12 @@
       },
       "value": 72361000000,
       "unit": "USD",
-      "source": "MICROSOFT CORP FY2023 Form 10-K, EDGAR",
+      "source": "MICROSOFT CORP FY2023 Form 10-K (Net Income (Loss) Attributable to Parent), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000789019",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Income (Loss) Attributable to Parent",
+      "accountingDefinition": "NetIncomeLoss (US-GAAP)"
     },
     {
       "factId": "MSFT-NETINCOME-FY2024",
@@ -28,10 +102,12 @@
       },
       "value": 88136000000,
       "unit": "USD",
-      "source": "MICROSOFT CORP FY2024 Form 10-K, EDGAR",
+      "source": "MICROSOFT CORP FY2024 Form 10-K (Net Income (Loss) Attributable to Parent), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000789019",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Income (Loss) Attributable to Parent",
+      "accountingDefinition": "NetIncomeLoss (US-GAAP)"
     },
     {
       "factId": "MSFT-NETINCOME-FY2025",
@@ -44,10 +120,12 @@
       },
       "value": 101832000000,
       "unit": "USD",
-      "source": "MICROSOFT CORP FY2025 Form 10-K, EDGAR",
+      "source": "MICROSOFT CORP FY2025 Form 10-K (Net Income (Loss) Attributable to Parent), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000789019",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Income (Loss) Attributable to Parent",
+      "accountingDefinition": "NetIncomeLoss (US-GAAP)"
     },
     {
       "factId": "MSFT-NETINCOME-FY2026",
@@ -60,10 +138,12 @@
       },
       "value": 133749000000,
       "unit": "USD",
-      "source": "MICROSOFT CORP FY2026 Form 10-K, EDGAR",
+      "source": "MICROSOFT CORP FY2026 Form 10-K (Net Income (Loss) Attributable to Parent), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000789019",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Income (Loss) Attributable to Parent",
+      "accountingDefinition": "NetIncomeLoss (US-GAAP)"
     },
     {
       "factId": "MSFT-OPERATINGCASHFLOW-FY2023",
@@ -76,10 +156,12 @@
       },
       "value": 87582000000,
       "unit": "USD",
-      "source": "MICROSOFT CORP FY2023 Form 10-K, EDGAR",
+      "source": "MICROSOFT CORP FY2023 Form 10-K (Net Cash Provided by (Used in) Operating Activities), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000789019",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Cash Provided by (Used in) Operating Activities",
+      "accountingDefinition": "NetCashProvidedByUsedInOperatingActivities (US-GAAP)"
     },
     {
       "factId": "MSFT-OPERATINGCASHFLOW-FY2024",
@@ -92,10 +174,12 @@
       },
       "value": 118548000000,
       "unit": "USD",
-      "source": "MICROSOFT CORP FY2024 Form 10-K, EDGAR",
+      "source": "MICROSOFT CORP FY2024 Form 10-K (Net Cash Provided by (Used in) Operating Activities), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000789019",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Cash Provided by (Used in) Operating Activities",
+      "accountingDefinition": "NetCashProvidedByUsedInOperatingActivities (US-GAAP)"
     },
     {
       "factId": "MSFT-OPERATINGCASHFLOW-FY2025",
@@ -108,10 +192,12 @@
       },
       "value": 136162000000,
       "unit": "USD",
-      "source": "MICROSOFT CORP FY2025 Form 10-K, EDGAR",
+      "source": "MICROSOFT CORP FY2025 Form 10-K (Net Cash Provided by (Used in) Operating Activities), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000789019",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Cash Provided by (Used in) Operating Activities",
+      "accountingDefinition": "NetCashProvidedByUsedInOperatingActivities (US-GAAP)"
     },
     {
       "factId": "MSFT-OPERATINGCASHFLOW-FY2026",
@@ -124,10 +210,12 @@
       },
       "value": 182935000000,
       "unit": "USD",
-      "source": "MICROSOFT CORP FY2026 Form 10-K, EDGAR",
+      "source": "MICROSOFT CORP FY2026 Form 10-K (Net Cash Provided by (Used in) Operating Activities), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000789019",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Net Cash Provided by (Used in) Operating Activities",
+      "accountingDefinition": "NetCashProvidedByUsedInOperatingActivities (US-GAAP)"
     },
     {
       "factId": "MSFT-RECEIVABLES-FY2023",
@@ -140,10 +228,12 @@
       },
       "value": 48688000000,
       "unit": "USD",
-      "source": "MICROSOFT CORP FY2023 Form 10-K, EDGAR",
+      "source": "MICROSOFT CORP FY2023 Form 10-K (Accounts Receivable, after Allowance for Credit Loss, Current), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000789019",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Accounts Receivable, after Allowance for Credit Loss, Current",
+      "accountingDefinition": "AccountsReceivableNetCurrent (US-GAAP)"
     },
     {
       "factId": "MSFT-RECEIVABLES-FY2024",
@@ -156,10 +246,12 @@
       },
       "value": 56924000000,
       "unit": "USD",
-      "source": "MICROSOFT CORP FY2024 Form 10-K, EDGAR",
+      "source": "MICROSOFT CORP FY2024 Form 10-K (Accounts Receivable, after Allowance for Credit Loss, Current), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000789019",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Accounts Receivable, after Allowance for Credit Loss, Current",
+      "accountingDefinition": "AccountsReceivableNetCurrent (US-GAAP)"
     },
     {
       "factId": "MSFT-RECEIVABLES-FY2025",
@@ -172,10 +264,12 @@
       },
       "value": 69905000000,
       "unit": "USD",
-      "source": "MICROSOFT CORP FY2025 Form 10-K, EDGAR",
+      "source": "MICROSOFT CORP FY2025 Form 10-K (Accounts Receivable, after Allowance for Credit Loss, Current), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000789019",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Accounts Receivable, after Allowance for Credit Loss, Current",
+      "accountingDefinition": "AccountsReceivableNetCurrent (US-GAAP)"
     },
     {
       "factId": "MSFT-RECEIVABLES-FY2026",
@@ -188,10 +282,12 @@
       },
       "value": 80876000000,
       "unit": "USD",
-      "source": "MICROSOFT CORP FY2026 Form 10-K, EDGAR",
+      "source": "MICROSOFT CORP FY2026 Form 10-K (Accounts Receivable, after Allowance for Credit Loss, Current), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000789019",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Accounts Receivable, after Allowance for Credit Loss, Current",
+      "accountingDefinition": "AccountsReceivableNetCurrent (US-GAAP)"
     },
     {
       "factId": "MSFT-CAPEX-FY2023",
@@ -204,10 +300,12 @@
       },
       "value": 28107000000,
       "unit": "USD",
-      "source": "MICROSOFT CORP FY2023 Form 10-K, EDGAR",
+      "source": "MICROSOFT CORP FY2023 Form 10-K (Payments to Acquire Property, Plant, and Equipment), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000789019",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Payments to Acquire Property, Plant, and Equipment",
+      "accountingDefinition": "PaymentsToAcquirePropertyPlantAndEquipment (US-GAAP)"
     },
     {
       "factId": "MSFT-CAPEX-FY2024",
@@ -220,10 +318,12 @@
       },
       "value": 44477000000,
       "unit": "USD",
-      "source": "MICROSOFT CORP FY2024 Form 10-K, EDGAR",
+      "source": "MICROSOFT CORP FY2024 Form 10-K (Payments to Acquire Property, Plant, and Equipment), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000789019",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Payments to Acquire Property, Plant, and Equipment",
+      "accountingDefinition": "PaymentsToAcquirePropertyPlantAndEquipment (US-GAAP)"
     },
     {
       "factId": "MSFT-CAPEX-FY2025",
@@ -236,10 +336,12 @@
       },
       "value": 64551000000,
       "unit": "USD",
-      "source": "MICROSOFT CORP FY2025 Form 10-K, EDGAR",
+      "source": "MICROSOFT CORP FY2025 Form 10-K (Payments to Acquire Property, Plant, and Equipment), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000789019",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Payments to Acquire Property, Plant, and Equipment",
+      "accountingDefinition": "PaymentsToAcquirePropertyPlantAndEquipment (US-GAAP)"
     },
     {
       "factId": "MSFT-CAPEX-FY2026",
@@ -252,10 +354,12 @@
       },
       "value": 115948000000,
       "unit": "USD",
-      "source": "MICROSOFT CORP FY2026 Form 10-K, EDGAR",
+      "source": "MICROSOFT CORP FY2026 Form 10-K (Payments to Acquire Property, Plant, and Equipment), EDGAR",
       "sourceUrl": "https://www.sec.gov/edgar/browse/?CIK=0000789019",
       "type": "FACT",
-      "availability": "reported"
+      "availability": "reported",
+      "lineItem": "Payments to Acquire Property, Plant, and Equipment",
+      "accountingDefinition": "PaymentsToAcquirePropertyPlantAndEquipment (US-GAAP)"
     }
   ]
 }
