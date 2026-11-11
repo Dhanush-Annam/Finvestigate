@@ -179,12 +179,12 @@ export async function verifyClaim(
 
   // 4. Period matching check: verify that stated period aligns with referenced period
   if (row.period && row.period.label) {
-    const claimFyMatch = claim.text.match(/\bFY(20\d{2})\b/i);
+    const allClaimFys = Array.from(claim.text.matchAll(/\bFY(20\d{2})\b/gi), (m) => m[1]);
     const rowFyMatch = row.period.label.match(/\bFY(20\d{2})\b/i);
-    if (claimFyMatch && rowFyMatch && claimFyMatch[1] !== rowFyMatch[1]) {
+    if (allClaimFys.length > 0 && rowFyMatch && !allClaimFys.includes(rowFyMatch[1])) {
       const res: VerifyResult = {
         pass: false,
-        reason: `Claim references period FY${claimFyMatch[1]}, but evidence "${claim.ref_id}" is for period ${row.period.label}`,
+        reason: `Claim references period FY${allClaimFys[0]}, but evidence "${claim.ref_id}" is for period ${row.period.label}`,
         resultCode: "fail_period",
         verificationLevel: "numeric",
       };
