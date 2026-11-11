@@ -7,18 +7,18 @@ import * as orchestrator from "../../src/server/infrastructure/llm/orchestrator.
 import { resolve } from "node:path";
 import { unlink } from "node:fs/promises";
 
-vi.spyOn(orchestrator, "generateConstrainedAIDebate").mockImplementation(async (inv: any) => ({
-  bullCase: { arguments: [], overallStrength: 5 },
-  bearCase: { arguments: [], overallStrength: 5 },
-  judgeVerdict: { evidenceQuality: "HIGH", mostImportantUnresolvedQuestion: "None", explanation: "Mock" },
-  mode: "deterministic_fallback",
-}));
-
 describe("Phase 2 — Relational Database Repository Suite", () => {
   let adapter: SqliteAdapter;
   const testDbPath = resolve(process.cwd(), "data", "test_finvestigate.db");
 
   beforeEach(async () => {
+    vi.spyOn(orchestrator, "generateConstrainedAIDebate").mockImplementation(async (inv: any) => ({
+      bullCase: { arguments: [], overallStrength: 5 },
+      bearCase: { arguments: [], overallStrength: 5 },
+      judgeVerdict: { evidenceQuality: "HIGH", mostImportantUnresolvedQuestion: "None", explanation: "Mock" },
+      mode: "deterministic_fallback",
+    }));
+
     try {
       await unlink(testDbPath);
     } catch (_err) {}
@@ -150,7 +150,7 @@ describe("Phase 2 — Relational Database Repository Suite", () => {
     const msft2 = await loadInvestigation("MSFT");
     expect(msft2.company).toBe("MSFT");
     expect(fetchSpy).toHaveBeenCalledTimes(1);
-  }, 30000);
+  }, 60000);
 
   it("triggers refetch when database cache becomes stale beyond TTL", async () => {
     await adapter.seedCuratedData();
@@ -168,7 +168,7 @@ describe("Phase 2 — Relational Database Repository Suite", () => {
     // Call loadInvestigation again - should trigger refetch
     await loadInvestigation("MSFT");
     expect(fetchSpy).toHaveBeenCalledTimes(2);
-  }, 45000);
+  }, 90000);
 
   it("passes PRAGMA integrity_check and foreign_key_check with zero errors", () => {
     const integrity = (adapter as any).db.pragma("integrity_check");

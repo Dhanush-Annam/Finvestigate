@@ -6,7 +6,7 @@ import { runBullAgent } from "./bull-agent.js";
 import { computeDeterministicStrength } from "./deterministic-scorer.js";
 import { buildEvidencePack } from "./evidence-pack.js";
 import { runJudgeAgent } from "./judge-agent.js";
-import { getGeminiApiKey } from "./provider.js";
+import { getLLMApiKey } from "./provider.js";
 import type { EvidenceRegistry } from "./types.js";
 import { z } from "zod";
 
@@ -38,7 +38,10 @@ function mapRefsToEvidenceItems(
   return items;
 }
 
-export async function generateConstrainedAIDebate(investigation: Investigation): Promise<Debate> {
+export async function generateConstrainedAIDebate(
+  investigation: Investigation,
+  onStageChange?: (stage: "bull" | "bear" | "judge", message: string) => void
+): Promise<Debate> {
   const fallbackDebate = () => {
     const fallback = generateLiveDebate(
       investigation.company,
@@ -53,7 +56,7 @@ export async function generateConstrainedAIDebate(investigation: Investigation):
     };
   };
 
-  const apiKey = getGeminiApiKey();
+  const apiKey = getLLMApiKey();
   if (!apiKey) {
     console.log("[AI Debate Orchestrator] API key not configured. Using deterministic fallback debate.");
     return fallbackDebate();
@@ -63,6 +66,7 @@ export async function generateConstrainedAIDebate(investigation: Investigation):
     const evidencePack = buildEvidencePack(investigation);
 
     // Step 1: Bull Agent
+    onStageChange?.("bull", "Generating grounded Bull thesis...");
     const bullOutput = await runBullAgent(evidencePack);
     if (!bullOutput) {
       console.warn("[AI Debate Orchestrator] Bull agent failed or produced ungrounded output. Falling back.");
@@ -70,6 +74,7 @@ export async function generateConstrainedAIDebate(investigation: Investigation):
     }
 
     // Step 2: Bear Agent
+    onStageChange?.("bear", "Synthesizing Bear counter-rebuttal...");
     const bearOutput = await runBearAgent(evidencePack, bullOutput);
     if (!bearOutput) {
       console.warn("[AI Debate Orchestrator] Bear agent failed or produced ungrounded output. Falling back.");
@@ -77,6 +82,7 @@ export async function generateConstrainedAIDebate(investigation: Investigation):
     }
 
     // Step 3: Judge Agent
+    onStageChange?.("judge", "Adjudicating debate factors and evidence quality...");
     const judgeOutput = await runJudgeAgent(evidencePack, bullOutput, bearOutput);
     if (!judgeOutput) {
       console.warn("[AI Debate Orchestrator] Judge agent failed or produced ungrounded output. Falling back.");

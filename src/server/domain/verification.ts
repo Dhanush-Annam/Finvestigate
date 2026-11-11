@@ -5,6 +5,7 @@ import { DebateArgumentSchema } from "../../shared/types/index.js";
 import { generateLiveDebate } from "../infrastructure/llm/live-debate.js";
 import { isVerificationPass } from "../../shared/utils/diligence.js";
 import { PASS_RESULT_CODES } from "../../shared/constants/index.js";
+import { resolveCik } from "../infrastructure/sources/live-cik.js";
 
 export { isVerificationPass, PASS_RESULT_CODES };
 
@@ -80,7 +81,6 @@ export async function verifyClaim(
   surface?: "debate" | "finding" | "claim_check"
 ): Promise<VerifyResult> {
   let normalizedTicker = ticker.toUpperCase();
-  const { resolveCik } = await import("../infrastructure/sources/live-cik.js");
   const cikInfo = await resolveCik(ticker);
   if (cikInfo) {
     normalizedTicker = cikInfo.ticker.toUpperCase();
@@ -179,12 +179,12 @@ export async function verifyClaim(
 
   // 4. Period matching check: verify that stated period aligns with referenced period
   if (row.period && row.period.label) {
-    const claimFyMatch = claim.text.match(/\bFY(20\d{2})\b/i);
+    const allClaimFys = Array.from(claim.text.matchAll(/\bFY(20\d{2})\b/gi), (m) => m[1]);
     const rowFyMatch = row.period.label.match(/\bFY(20\d{2})\b/i);
-    if (claimFyMatch && rowFyMatch && claimFyMatch[1] !== rowFyMatch[1]) {
+    if (allClaimFys.length > 0 && rowFyMatch && !allClaimFys.includes(rowFyMatch[1])) {
       const res: VerifyResult = {
         pass: false,
-        reason: `Claim references period FY${claimFyMatch[1]}, but evidence "${claim.ref_id}" is for period ${row.period.label}`,
+        reason: `Claim references period FY${allClaimFys[0]}, but evidence "${claim.ref_id}" is for period ${row.period.label}`,
         resultCode: "fail_period",
         verificationLevel: "numeric",
       };

@@ -2,7 +2,7 @@ import React from "react";
 import type { InvestigationData } from "../types/index.js";
 import { displayCalculationValue } from "../types/index.js";
 import { getMaterialRedFlags, getLowSeveritySignals } from "../../shared/utils/diligence.js";
-import { SearchIcon, CheckIcon, AlertTriangleIcon, ActivityIcon } from "./Icons.js";
+import { SearchIcon, CheckIcon, AlertTriangleIcon, ActivityIcon, TrendingUpIcon, TrendingDownIcon } from "./Icons.js";
 
 interface DivergenceRadarProps {
   investigation: InvestigationData;
@@ -33,6 +33,12 @@ export const DivergenceRadar: React.FC<DivergenceRadarProps> = ({
   const lowSeveritySignals = getLowSeveritySignals(investigation.findings);
   const detectedSignals = investigation.findings.filter((f) => f.signalName || f.severity === "LOW" || f.severity === "HIGH");
 
+  // Check for receivables acceleration divergence
+  const revVal = revCalc?.value ?? 0;
+  const recVal = recCalc?.value ?? 0;
+  const receivablesSpreadPp = (recVal - revVal) * 100;
+  const hasReceivablesDivergence = receivablesSpreadPp > 10;
+
   return (
     <section
       className="divergence-panel"
@@ -41,21 +47,39 @@ export const DivergenceRadar: React.FC<DivergenceRadarProps> = ({
       aria-label="Cash flow quality divergence visualizer"
     >
       <div className="section-heading">
-        <p className="eyebrow">Stage 02 · Discover · Pattern Screen</p>
-        <h2>6-Signal Forensic Anomaly Screen</h2>
+        <div className="heading-row-flex">
+          <div>
+            <p className="eyebrow">Quantitative Anomaly Screen</p>
+            <h2>Working Capital &amp; Cash Flow Divergence Radar</h2>
+          </div>
+          <span className="source-grounded-tag">
+            <CheckIcon size={12} /> Deterministic 10-K Reconciliation
+          </span>
+        </div>
         <p>
-          Reconciles reported cash generation against accounting net income using 7 deterministic formulas.
+          Cross-reconciles reported cash generation against accounting net income and working-capital expansion using deterministic formulas.
         </p>
       </div>
+
+      {/* Receivables vs Revenue Spread Callout Banner (if applicable) */}
+      {hasReceivablesDivergence && (
+        <div className="divergence-alert-callout">
+          <AlertTriangleIcon size={16} style={{ color: "var(--status-warning)", flexShrink: 0, marginTop: "2px" }} />
+          <div>
+            <strong>Receivables Acceleration Divergence Flagged (+{receivablesSpreadPp.toFixed(1)} percentage point spread)</strong>
+            <p>
+              Trade accounts receivable grew (+{(recVal * 100).toFixed(1)}% YoY) at a faster velocity than recognized revenue (+{(revVal * 100).toFixed(1)}% YoY). Follow-up audit recommended on customer credit terms, DSO aging, and unbilled receivables.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="divergence-grid">
         {/* Left: 7 Deterministic Growth Benchmarks */}
         <div className="divergence-chart-card">
           <div className="chart-header">
             <h3>Audited Math Benchmarks ({investigation.company})</h3>
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--text-muted)" }}>
-              Deterministic 10-K Reconciliation
-            </span>
+            <span className="mono-subtext">Click metric to trace formula lineage</span>
           </div>
 
           <div className="chart-bars-list">
@@ -107,7 +131,7 @@ export const DivergenceRadar: React.FC<DivergenceRadarProps> = ({
             >
               <div className="bar-meta">
                 <span className="bar-label">
-                  Operating Cash Flow (YoY)
+                  Operating Cash Flow Growth (YoY)
                   <span className="trace-hint">· Trace</span>
                 </span>
                 <span className="bar-value" style={{ color: (ocfCalc?.value ?? 0) < 0 ? "var(--status-rejected)" : "var(--text-primary)" }}>
@@ -130,7 +154,7 @@ export const DivergenceRadar: React.FC<DivergenceRadarProps> = ({
             >
               <div className="bar-meta">
                 <span className="bar-label">
-                  Receivables Growth (YoY)
+                  Accounts Receivable Growth (YoY)
                   <span className="trace-hint">· Trace</span>
                 </span>
                 <span className="bar-value">
@@ -138,7 +162,7 @@ export const DivergenceRadar: React.FC<DivergenceRadarProps> = ({
                 </span>
               </div>
               <div className="bar-track">
-                <div className="bar-fill warning" style={{ width: normalizeWidth(recCalc?.value ?? null, 1.0) }} />
+                <div className={`bar-fill ${hasReceivablesDivergence ? "warning" : "normal"}`} style={{ width: normalizeWidth(recCalc?.value ?? null, 1.0) }} />
               </div>
             </div>
 
@@ -230,17 +254,12 @@ export const DivergenceRadar: React.FC<DivergenceRadarProps> = ({
 
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             {materialRedFlags.length === 0 && (
-              <div style={{
-                padding: "12px 14px",
-                borderRadius: "var(--radius-control)",
-                background: "var(--status-verified-bg)",
-                border: "1px solid var(--status-verified-border)",
-              }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "var(--status-verified)", fontSize: "13px", fontWeight: 500, marginBottom: "2px" }}>
+              <div className="anomaly-pass-card">
+                <div className="pass-title-row">
                   <CheckIcon size={14} />
                   <span>No Material Accounting Red Flags Detected</span>
                 </div>
-                <p style={{ fontSize: "12px", color: "var(--text-secondary)", margin: 0 }}>
+                <p>
                   {lowSeveritySignals.length > 0
                     ? "Working-capital growth divergence is within normal operating variance. Monitoring advised."
                     : "Cash conversion and working capital remain strictly aligned with audited revenue recognition."}
@@ -251,67 +270,37 @@ export const DivergenceRadar: React.FC<DivergenceRadarProps> = ({
             {detectedSignals.map((signal, idx) => (
               <div
                 key={idx}
-                style={{
-                  padding: "12px 14px",
-                  borderRadius: "var(--radius-control)",
-                  background: "var(--bg-card)",
-                  border: "1px solid var(--border-hairline)",
-                  borderLeft: `3px solid ${signal.severity === "HIGH" ? "var(--status-rejected)" : "var(--status-warning)"}`,
-                }}
+                className={`anomaly-signal-card ${signal.severity === "HIGH" ? "critical" : "warning"}`}
               >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-                  <span style={{
-                    fontSize: "12px",
-                    fontWeight: 500,
-                    color: signal.severity === "HIGH" ? "var(--status-rejected)" : "var(--status-warning)",
-                  }}>
-                    {signal.severity === "LOW" ? "Low-Severity Signal" : "Red Flag"}: {signal.signalName || signal.category.replace(/_/g, " ")}
+                <div className="signal-card-top">
+                  <span className={`signal-type-tag ${signal.severity === "HIGH" ? "critical" : "warning"}`}>
+                    {signal.severity === "HIGH" ? "Red Flag" : "Low-Severity Signal"}: {signal.signalName || signal.category.replace(/_/g, " ")}
                   </span>
-                  <span style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+                  <span className="signal-threshold-text">
                     Threshold: {signal.threshold || ">10pp divergence"}
                   </span>
                 </div>
-                <p style={{ fontSize: "12px", color: "var(--text-primary)", marginBottom: "6px" }}>
-                  {signal.claim}
-                </p>
+                <p className="signal-claim-text">{signal.claim}</p>
                 {signal.financialRationale && (
-                  <p style={{ fontSize: "11px", color: "var(--text-secondary)", marginBottom: "6px", lineHeight: 1.5 }}>
-                    {signal.financialRationale}
-                  </p>
+                  <p className="signal-rationale-text">{signal.financialRationale}</p>
                 )}
                 {signal.whatToInvestigateNext && (
-                  <div style={{
-                    padding: "8px 10px",
-                    background: "var(--bg-deep)",
-                    borderRadius: "var(--radius-tag)",
-                    border: "1px solid var(--border-hairline)",
-                    fontSize: "11px",
-                    color: "var(--text-secondary)",
-                    display: "flex",
-                    alignItems: "flex-start",
-                    gap: "6px",
-                  }}>
+                  <div className="signal-investigate-lead">
                     <SearchIcon size={13} style={{ flexShrink: 0, marginTop: "2px", color: "var(--accent)" }} />
                     <span>
-                      <strong style={{ color: "var(--text-primary)" }}>Investigation lead:</strong> {signal.whatToInvestigateNext}
+                      <strong>Investigation lead:</strong> {signal.whatToInvestigateNext}
                     </span>
                   </div>
                 )}
               </div>
             ))}
 
-            <div style={{
-              padding: "12px 14px",
-              borderRadius: "var(--radius-control)",
-              background: "var(--bg-card)",
-              border: "1px solid var(--border-hairline)",
-              fontSize: "12px",
-            }}>
-              <strong style={{ color: "var(--text-primary)", display: "block", marginBottom: "4px" }}>
+            <div className="baseline-explanation-card">
+              <strong className="baseline-card-title">
                 Cash Conversion Screening Baseline
               </strong>
-              <p style={{ color: "var(--text-secondary)", margin: 0, lineHeight: 1.5 }}>
-                Operating cash flow growth trailed revenue growth by 5.2 percentage points; configured divergence threshold (&gt;10pp) was not breached. Cash conversion ratio of {convCalc ? displayCalculationValue(convCalc) : "0.86x"} satisfies the screening threshold (≥0.70x).
+              <p>
+                Operating cash flow growth trailed revenue growth by 5.2 percentage points; configured divergence threshold (&gt;10pp) was not breached. Cash conversion ratio of {convCalc ? displayCalculationValue(convCalc) : "0.86x"} satisfies institutional screening thresholds (≥0.70x).
               </p>
             </div>
           </div>

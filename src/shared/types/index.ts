@@ -195,3 +195,69 @@ export interface DiligenceVerdict {
   subtextBadge: string;
   narrative: string;
 }
+
+export interface BeneishMScoreResult {
+  score: number | null;
+  interpretation: "HIGH_MANIPULATION_RISK" | "LOW_MANIPULATION_RISK" | "INSUFFICIENT_DATA";
+  threshold: number;
+  variables: {
+    dsri: { value: number | null; description: string; formula: string; flag: boolean };
+    gmi: { value: number | null; description: string; formula: string; flag: boolean };
+    aqi: { value: number | null; description: string; formula: string; flag: boolean };
+    sgi: { value: number | null; description: string; formula: string; flag: boolean };
+    depi: { value: number | null; description: string; formula: string; flag: boolean };
+    sgai: { value: number | null; description: string; formula: string; flag: boolean };
+    lvgi: { value: number | null; description: string; formula: string; flag: boolean };
+    tata: { value: number | null; description: string; formula: string; flag: boolean };
+  };
+  summary: string;
+}
+
+export interface AltmanZScoreResult {
+  score: number | null;
+  classification: "SAFE" | "GREY_ZONE" | "DISTRESS" | "INSUFFICIENT_DATA";
+  thresholds: { safe: number; distress: number };
+  components: {
+    x1: { value: number | null; description: string; weight: number };
+    x2: { value: number | null; description: string; weight: number };
+    x3: { value: number | null; description: string; weight: number };
+    x4: { value: number | null; description: string; weight: number };
+    x5: { value: number | null; description: string; weight: number };
+  };
+  summary: string;
+}
+
+export interface SloanAccrualResult {
+  ratio: number | null;
+  interpretation: "AGGRESSIVE_ACCRUALS" | "BALANCED" | "HIGH_CASH_REALIZATION" | "INSUFFICIENT_DATA";
+  accrualsDollar: number | null;
+  totalAssets: number | null;
+  summary: string;
+}
+
+export interface PiotroskiFScoreResult {
+  score: number | null;
+  maxScore: number;
+  classification: "STRONG" | "MODERATE" | "WEAK" | "INSUFFICIENT_DATA";
+  signals: {
+    positiveNetIncome: boolean;
+    positiveRoa: boolean;
+    positiveOcf: boolean;
+    cashFlowGreaterThanNetIncome: boolean;
+    lowerLeverage: boolean;
+    higherCurrentRatio: boolean;
+    noDilution: boolean;
+    higherGrossMargin: boolean;
+    higherAssetTurnover: boolean;
+  };
+  summary: string;
+}
+
+export interface ForensicSuiteResult {
+  beneish: BeneishMScoreResult;
+  altman: AltmanZScoreResult;
+  sloan: SloanAccrualResult;
+  piotroski: PiotroskiFScoreResult;
+  calculations: Calculation[];
+  findings: Finding[];
+}

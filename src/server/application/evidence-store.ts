@@ -6,15 +6,16 @@ import { resolveCik } from "../infrastructure/sources/live-cik.js";
 import { getRepository } from "../infrastructure/db/repository.js";
 import { generateLiveDebate } from "../infrastructure/llm/live-debate.js";
 import { calculateFundamentalScores } from "../domain/fundamental-scorer.js";
+import { runForensicSuite } from "../domain/forensic-models.js";
 import {
   verifyAndFilterDebate,
   verifyAndFilterFindings,
   verifyAndFilterClaimChecks,
 } from "../domain/verification.js";
-import { runFullPipeline } from "./investigation-service.js";
+import { runFullPipeline, type ProgressCallback } from "./investigation-service.js";
 
 export { CACHE_TTL_DAYS, runFullPipeline };
-export type { Investigation };
+export type { Investigation, ProgressCallback };
 
 // PROCESS-LOCAL CONCURRENCY LOCK:
 // Single-flight Promise coalescing to deduplicate concurrent same-ticker requests within this process.
@@ -23,7 +24,10 @@ export type { Investigation };
 // would be required to coalesce across separate processes.
 const inFlightInvestigations = new Map<string, Promise<Investigation>>();
 
-export async function loadInvestigation(ticker: string): Promise<Investigation> {
+export async function loadInvestigation(
+  ticker: string,
+  onProgress?: ProgressCallback
+): Promise<Investigation> {
   let normalizedTicker = ticker.trim().toUpperCase();
   const cikInfo = await resolveCik(ticker);
   if (cikInfo) {
@@ -35,7 +39,7 @@ export async function loadInvestigation(ticker: string): Promise<Investigation> 
     return inFlight;
   }
 
-  const promise = executeLoadInvestigation(normalizedTicker).finally(() => {
+  const promise = executeLoadInvestigation(normalizedTicker, onProgress).finally(() => {
     inFlightInvestigations.delete(normalizedTicker);
   });
 
@@ -43,7 +47,10 @@ export async function loadInvestigation(ticker: string): Promise<Investigation> 
   return promise;
 }
 
-async function executeLoadInvestigation(normalizedTicker: string): Promise<Investigation> {
+async function executeLoadInvestigation(
+  normalizedTicker: string,
+  onProgress?: ProgressCallback
+): Promise<Investigation> {
   const repo = await getRepository();
   const company = await repo.getCompany(normalizedTicker);
   if (company && !(await repo.isCacheStale(normalizedTicker, CACHE_TTL_DAYS))) {
@@ -84,6 +91,12 @@ async function executeLoadInvestigation(normalizedTicker: string): Promise<Inves
         }
       }
 
+      if (!cached.forensics && cached.facts && cached.facts.length > 0) {
+        const periods = [...new Map(cached.facts.map((fact) => [fact.period.label, fact.period])).values()]
+          .sort((left, right) => right.endDate.localeCompare(left.endDate));
+        cached.forensics = runForensicSuite(cached.company, cached.facts, periods);
+      }
+
       if (!cached.verificationStats) {
         const logs = await repo.getVerificationLogs(normalizedTicker, "production");
         if (logs.length > 0) {
@@ -101,12 +114,14 @@ async function executeLoadInvestigation(normalizedTicker: string): Promise<Inves
           };
         }
       }
+
+      onProgress?.("complete", 100, `Serving verified investigation for ${cached.company} from regulatory cache.`);
       return cached;
     }
   }
 
   // Cache miss or stale: run pipeline, verify claims, and save to DB
-  const fresh = await runFullPipeline(normalizedTicker);
+  const fresh = await runFullPipeline(normalizedTicker, onProgress);
   const runId = fresh.runId || `run-${randomUUID()}`;
   fresh.runId = runId;
 
@@ -156,5 +171,6 @@ async function executeLoadInvestigation(normalizedTicker: string): Promise<Inves
   // 3. Save final verified state under the exact same runId
   await repo.saveInvestigation(fresh, { runId });
 
+  onProgress?.("complete", 100, `Investigation verified and persisted for ${fresh.company}.`);
   return fresh;
 }

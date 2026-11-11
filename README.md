@@ -1,132 +1,82 @@
-# FINVESTIGATE — Evidence-First Financial Intelligence
+# Finvestigate
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](package.json)
-[![Tests](https://img.shields.io/badge/tests-110%2F110%20passing-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-117%2F117%20passing-brightgreen.svg)](package.json)
 
-> *"Don't trust the AI. Investigate its evidence."*
+Deterministic financial investigation engine and adversarial multi-agent debate platform for SEC EDGAR and BSE statutory filings.
 
-FINVESTIGATE is an open-source, deterministic financial investigation engine and adversarial AI debate platform for SEC EDGAR filings. 
-
-Instead of letting Large Language Models (LLMs) summarize raw financial filings—which frequently leads to hallucinations, sign-flip calculation errors, and untraceable claims—FINVESTIGATE enforces a strict **Evidence Chain Hierarchy**: 
-
-$$\text{SEC EDGAR Source Fact} \longrightarrow \text{Deterministic Math Engine} \longrightarrow \text{Rule Anomaly Engine} \longrightarrow \text{LLM Debate/Explanation}$$
+> **Statutory Filings (SEC / BSE)** → **Deterministic Math Core** → **Forensic Accounting Models** → **Adversarial AI Debate**
 
 ---
 
-## System Architecture & Engineering Story
+## Architecture
 
-Building FINVESTIGATE was not a linear sprint of writing UI components—it was an evolution through 4 distinct phases of engineering challenges: **Ingestion**, **Storage & Deterministic Logic**, **Runtime Reliability**, and **Verification Transparency**.
-
-```
-                           +-------------------------------------+
-                           |   SEC EDGAR XBRL (data.sec.gov)     |
-                           +-------------------------------------+
-                                              |
-                                              v
-                           +-------------------------------------+
-                           |  Phase 1: Multi-Scale Ingestion     |
-                           |  (10-K/10-Q Filtering & Parsing)    |
-                           +-------------------------------------+
-                                              |
-                                              v
-+-----------------------------------------------------------------------------------+
-| Phase 2: Deterministic Evidence Store & Domain Types                              |
-|                                                                                   |
-|  [Fact Schema]  --->  [Calculation Engine]  --->  [Anomaly Rules Engine]            |
-|  (Source URLs)        (YoY / FCF Math)            (Cash Flow & Receivables Diverg.)|
-+-----------------------------------------------------------------------------------+
-                                              |
-                                              v
-                           +-------------------------------------+
-                           | Phase 3: Runtime Reliability Gate   |
-                           | (Live CIK Lookup, Retry & Timeouts) |
-                           +-------------------------------------+
-                                              |
-                                              v
-                           +-------------------------------------+
-                           | Phase 4: Adversarial & Audit Layer  |
-                           | (Bull vs Bear LLMs + Audit Drawer)  |
-                           +-------------------------------------+
+```mermaid
+flowchart LR
+    A["Statutory Filings<br/>(SEC EDGAR / BSE)"] --> B["Ingestion Engine<br/>(10-K Duration / Restatement)"]
+    B --> C["Deterministic Math Core<br/>(Zero-LLM Ratios & Margins)"]
+    C --> D["Forensic Models<br/>(Beneish, Altman, Sloan, Piotroski)"]
+    D --> E{"3-Surface<br/>Verification Gate"}
+    E -->|"Passed"| F["Courtroom Debate & Terminal<br/>(Bull vs. Bear + Lineage Trace)"]
+    E -->|"Violations"| G["Purged & Logged<br/>to Audit Drawer"]
 ```
 
----
+Finvestigate eliminates Large Language Model (LLM) financial hallucinations by enforcing an evidence-grounded pipeline: LLMs never calculate numbers, cite ungrounded metrics, or summarize filings without deterministic verification.
 
-### Phase 1: Ingestion — Raw SEC EDGAR & XBRL Reality
+### Core Pipelines
 
-**The Challenge:** SEC EDGAR `companyfacts` JSON contains thousands of uncurated XBRL tags across restated periods, quarterly filings (`10-Q`), annual filings (`10-K`), and overlapping durations. Early naive fetches resulted in catastrophic calculation errors (e.g., pulling a 3-month net income figure as an annual figure, producing false $-1217.7\%$ growth claims).
-
-**The Architectural Solution:**
-- **Strict XBRL Metadata Filtering:** Filtered raw SEC data strictly by `form: "10-K"`, `fp: "FY"`, and exact 365-day duration tags ($\Delta t \in [350, 380]$ days). Restated figures are resolved by taking the latest `filed` date timestamp.
-- **Dynamic CIK Resolver:** Implemented real-time ticker-to-CIK mapping (`https://www.sec.gov/files/company_tickers.json`) with zero-padded 10-digit CIK formatting to support any public US ticker dynamically.
-- **Primary-Source Statutory Ingestion:** Integrated dual pipelines supporting both SEC EDGAR XBRL filings and domestic Indian statutory accounting standards (BSE / Ind AS).
+- **Dual Regulatory Ingestion**: Ingests annual SEC EDGAR XBRL filings (`companyfacts`, 10-K duration tags filtered to 350–380 days with restatement deduplication) and Indian statutory accounting filings (BSE / Ind AS).
+- **Zero-LLM Math Core**: Financial ratios (YoY growth, gross margin, operating margin, Free Cash Flow) are computed strictly via pure TypeScript domain functions with runtime Zod schema validation and sign-flip guards.
+- **3-Surface Verification Barrier**: Intercepts ungrounded metrics, cross-company citation contamination, missing calculation references, and numeric drift before claims can reach presentations or debate outputs.
+- **Constrained Tri-Agent Debate**: An adversarial Bull vs. Bear debate moderated by an impartial Judge agent, featuring 1-turn automated citation self-correction and atomic fallback to deterministic synthesis if verification fails.
 
 ---
 
-### Phase 2: Storage & Deterministic Calculation Engine
+## Forensic & Accounting Models
 
-**The Challenge:** LLMs are notoriously unreliable at arithmetic. Allowing an LLM to calculate ratios, free cash flows, or year-over-year percentages guarantees financial hallucinations.
+All financial calculations and anomaly detections are evaluated deterministically in pure TypeScript:
 
-**The Architectural Solution:**
-- **Zero-LLM Math Core:** All mathematical operations (YoY Growth, Receivables-to-Revenue divergence, Free Cash Flow $OCF - CapEx$) are implemented in pure TypeScript functions with Zod schema validation.
-- **Sign-Flip Guard & Math Safety:** Standard growth formulas $\frac{\text{Current} - \text{Prior}}{\text{Prior}}$ break when prior numbers cross zero or are negative (e.g., swinging from $-\$2.7\text{B}$ to $+\$30.4\text{B}$). We introduced sign-flip detection (`sign_flip: true`) to convert raw math breaks into qualitative domain signals (`"turned profitable"`).
-- **Rule-Based Anomaly Engine:**
-  - `cash_flow_quality_divergence`: Triggers when Operating Cash Flow growth trails Net Income growth by $>10\%$.
-  - `receivables_outpacing_revenue`: Triggers when Receivables growth outpaces Revenue growth by $>10\%$.
-
----
-
-### Phase 3: Reliability & System Hardening
-
-**The Challenge:** Live API calls to SEC EDGAR are rate-limited, subject to intermittent network timeouts, and vary dramatically in schema completeness across tickers (e.g., tech vs. retail vs. cyclical industries).
-
-**The Architectural Solution:**
-- **Hybrid Data Pipeline:** Dual-mode architecture combining a pre-curated, instant-load dataset for benchmark tickers (`NVDA`, `AAPL`, `MSFT`, `AMD`, `GOOGL`, `INTC`, `RELIANCE`, `TCS`, `TATAMOTORS`) with a resilient live fetch pipeline for arbitrary tickers.
-- **Graceful Degraded States:** When management guidance or peer comparison datasets are absent in live mode, the UI explicitly flags reduced scope (`LIVE MODE — LIMITED EVIDENCE`) rather than hallucinating fallback metrics.
-- **Fault-Tolerant Retries & Model Fallbacks:** Strict fetch timeouts ($8\text{s}$) with fallback error boundaries. For LLM generation, transient model rate limits or 503 spikes automatically retry with fallback models (`gemini-3.5-flash-lite` $\rightarrow$ `gemini-3.5-flash`) before gracefully degrading to deterministic debate generation.
-- **Resilient Dual-Adapter Persistence:** Relational repository implementation automatically fails over from Turso Cloud to local SQLite if cloud credentials are misconfigured or unreachable, preserving API service availability.
-
----
-
-### Phase 4: Transparency & Verification Audit Layer
-
-**The Challenge:** AI financial tools often present LLM summaries as objective truth. If an LLM fabricates a citation or hallucinates an argument, the user has no way of knowing.
-
-**The Architectural Solution:**
-- **Adversarial Debate Engine:** A tri-agent framework where a **Bull Agent** and **Bear Agent** compete to interpret verified findings, monitored by an impartial **Judge Agent** that highlights unresolved financial risks.
-- **3-Surface Verification Gate:** Every generated Finding, Claim Check, and Debate argument passes through an automated verification barrier (`verification.ts`). Any statement referencing an unverified fact or invalid citation URL is purged before rendering.
-- **Audit Drawer UI & Segregated Telemetry:** Real-time visual header badge (`X items removed by citation verification`) and an audit modal drawer allowing users to inspect discarded claims and rejection logs, segregated cleanly between production filing audits and adversarial attack simulations.
-- **Attack Center with Mutation Authorization:** Built-in adversarial injection center to test citation verification resistance against fabricated IDs, cross-company tampering, numeric drift, and sign-flip manipulations, protected by endpoint authorization (`API_SECRET_KEY`) in production.
-
----
-
-## Technology Stack
-
-| Layer | Technology | Rationale |
+| Model | Methodology | Decision Boundary |
 |---|---|---|
-| **Frontend** | React 19, Vite, Vanilla CSS | Fast rendering, glassmorphic UI, zero heavy CSS framework overhead |
-| **Backend API** | Node.js, Express 5, TypeScript | Type safety across financial domains, async execution, static SPA serving |
-| **Database** | SQLite (`better-sqlite3`) & Turso Cloud (`@libsql/client`) | Dual-adapter repository architecture: zero-dependency offline local persistence (SQLite) and hosted cloud persistence (Turso) with automatic local fallback |
-| **Data Engine** | Zod, SEC EDGAR XBRL API, BSE / Ind AS | Strict runtime schema enforcement and verified statutory data sources |
-| **LLM Orchestration** | Google Gen AI SDK (`@google/genai`) | Constrained Bull/Bear/Judge debate arguments with transient retry and deterministic fallback |
-| **Testing** | Vitest 3, Tsx | Comprehensive unit, forensic invariant, integration, security, and production E2E suites |
+| **Beneish M-Score** | 8-variable probabilistic model (`DSRI`, `GMI`, `AQI`, `SGI`, `DEPI`, `SGAI`, `LVGI`, `TATA`) | **M > -1.78**: Manipulation risk flag<br>**M ≤ -1.78**: Normal reporting |
+| **Altman Z-Score** | Multi-factor distress formula (working capital, retained earnings, EBIT, equity, sales) | **Z > 2.99**: Safe<br>**1.81 ≤ Z ≤ 2.99**: Grey Zone<br>**Z < 1.81**: Distress |
+| **Sloan Accruals** | Accrual ratio: `(Net Income − Operating Cash Flow) / Total Assets` | **> +10%**: Aggressive accruals<br>**< -10%**: Conservative / cash-backed |
+| **Piotroski F-Score** | 9-point fundamental scorecard across profitability, leverage, and efficiency | **8–9**: Strong<br>**5–7**: Moderate<br>**0–4**: Weak |
+| **Accounting Invariants** | YoY divergence between Cash Flow vs. Net Income, and Receivables vs. Revenue | **> 10% delta** triggers audit flag |
+
+---
+
+## Institutional Terminal Interface
+
+The frontend provides a tabbed financial terminal:
+
+- **Executive Overview**: Key metrics, filing provenance, and fundamental health trust scoreboards.
+- **Forensic Radar**: Real-time evaluation of Beneish, Altman, Sloan, and Piotroski scores.
+- **Courtroom Debate**: Adversarial Bull vs. Bear debate stream with 1-turn citation self-repair and Judge verdict.
+- **Evidence Lineage DAG**: Interactive visual dependency graph linking raw SEC filings to derived calculations and claims.
+- **Compliance & Attack Center**: Audit drawer exposing verification rejection logs and live adversarial injection testing.
+- **Deep-Linking & Print CSS**: Browser URL routing (`/company/:ticker/:tab`) and dedicated vector PDF export styling.
 
 ---
 
 ## API Reference
 
-The backend exposes a REST API running on port 3001 (configurable via `PORT`):
+The backend exposes a REST API on port `3001` (configurable via `PORT`):
 
 | Endpoint | Method | Auth | Description |
 |---|---|---|---|
-| `/health` | `GET` | Public | Service health check returning `{ status: "ok", service: "finvestigate-api" }` |
-| `/api/health` | `GET` | Public | API health check route alias |
-| `/api/investigations/:ticker` | `GET` | Public | Full investigation payload (facts, calculations, anomalies, claim checks, courtroom debate) |
-| `/api/verification-stats` | `GET` | Public | Verification audit statistics and rejection telemetry (supports `?ticker=<TICKER>`) |
-| `/api/investigations/:ticker/attack` | `POST` | `API_SECRET_KEY` (prod) | Injects adversarial attack scenario (`fabricated_id`, `cross_company`, `numeric_hallucination`, `sign_flip_mismatch`) |
+| `/health`, `/api/health` | `GET` | Public | Service health check returning `{ status: "ok", service: "finvestigate-api", version: "1.0.0" }` |
+| `/api/search` | `GET` | Public | Universal equities autocomplete across US (SEC) and Indian (BSE) tickers (`?q=<query>`) |
+| `/api/investigations/:ticker` | `GET` | Public | Full investigation payload (facts, ratios, forensic models, debate) |
+| `/api/investigations/:ticker/stream` | `GET` | Public | Server-Sent Events (SSE) live investigation progress and token stream |
+| `/api/verification-stats` | `GET` | Public | Verification audit statistics and rejection telemetry (supports optional `?ticker=<ticker>`) |
+| `/api/investigations/:ticker/attack` | `POST` | `API_SECRET_KEY` | Injects adversarial scenario to test verification resistance (`fabricated_id`, `cross_company`, `numeric_hallucination`, `sign_flip_mismatch`) |
 
 > [!NOTE]
-> In production (`NODE_ENV=production`), mutating endpoints (`POST /api/investigations/:ticker/attack`) require authorization via `X-API-Key: <key>` or `Authorization: Bearer <key>`. If `API_SECRET_KEY` is not configured, mutations fail closed with HTTP 503.
+> Mutation endpoints require `API_SECRET_KEY` passed via `X-API-Key` or `Authorization: Bearer <key>` in production. In development mode, calls are permitted with a default policy header when `API_SECRET_KEY` is unset.
+>
+> The API enforces a sliding-window rate limit (120 requests per 60 seconds per client IP), returning HTTP `429 Too Many Requests` with `retryAfterMs` on threshold breach.
 
 ---
 
@@ -134,132 +84,121 @@ The backend exposes a REST API running on port 3001 (configurable via `PORT`):
 
 ### Prerequisites
 
-- Node.js `v18.0.0` or higher
+- Node.js `v18.0.0` or higher (Node 20+ or 22 recommended)
 - npm `v9.0.0` or higher
+- Docker (optional, for containerized runtimes)
 
-### Installation
+### Quickstart
 
 ```bash
-# Clone the repository
-git clone https://github.com/Dhanush-Annam/FINVESTIGATE.git
-cd FINVESTIGATE
-
-# Install dependencies
+# 1. Clone repository & install dependencies
+git clone https://github.com/Dhanush-Annam/Finvestigate.git
+cd Finvestigate
 npm install
+
+# 2. Configure environment
+cp .env.example .env
+
+# 3. Start development servers (Express API on :3001, Vite React on :5173)
+npm run dev:api   # Terminal 1
+npm run dev:web   # Terminal 2
 ```
 
-> [!NOTE]
-> **Native Dependency Note (`better-sqlite3`):** `better-sqlite3` is a native C++ Node module used for local offline development. On fresh clones, npm automatically pulls prebuilt binaries for your platform.
+> [!TIP]
+> **Zero-Config Offline Mode:** Finvestigate operates out-of-the-box using local SQLite (`better-sqlite3`). If external LLM API keys (`OPENAI_API_KEY` or `GEMINI_API_KEY`) are omitted, the engine automatically degrades to its deterministic debate generator with 100% test pass rates and zero external dependencies.
 
 ---
 
 ## Environment Configuration
 
-Copy the example environment configuration:
+Finvestigate supports dual LLM backends: OpenAI-compatible providers (Option A) and Google Gemini (Option B). When both are omitted, the engine automatically engages deterministic synthesis.
 
-```bash
-cp .env.example .env
-```
-
-Configure variables in `.env` as required for your environment:
+Configure variables in `.env` as required:
 
 | Variable | Description | Required | Default |
 |---|---|---|---|
-| `GEMINI_API_KEY` | Google AI Studio API key for Gemini multi-agent debate synthesis | No (degrades to deterministic fallback) | — |
-| `LLM_MODEL` | Primary Gemini model ID for debate agents | No | `gemini-3.5-flash-lite` |
-| `SEC_USER_AGENT` | User-Agent header complying with SEC EDGAR fair access policy (`Name email@domain.com`) | No | `"Finvestigate Research contact@finvestigate.dev"` |
-| `TURSO_DATABASE_URL` | Turso Cloud libSQL connection URL for cloud persistence | No (falls back to local SQLite) | — |
-| `TURSO_AUTH_TOKEN` | Turso Cloud authentication token | Required if `TURSO_DATABASE_URL` is set | — |
-| `API_SECRET_KEY` | Shared secret token authorizing mutating attack endpoints | Required for attack execution in production (`NODE_ENV=production`) | — |
+| `OPENAI_API_KEY` | OpenAI-compatible API key (supporting OpenAI, Ollama, Groq, or proxies) | No (deterministic fallback) | — |
+| `OPENAI_BASE_URL` | Base URL for OpenAI-compatible completions | No | `https://api.openai.com/v1` |
+| `GEMINI_API_KEY` | Google AI Studio API key (also accepts `GOOGLE_GENAI_API_KEY`) | No (deterministic fallback) | — |
+| `LLM_MODEL` | Model identifier for debate synthesis | No | `auto:fast` (OpenAI) / `gemini-3.5-flash-lite` (Gemini) |
+| `SEC_USER_AGENT` | User-Agent header complying with SEC EDGAR fair access policy | No | `"Finvestigate Research contact@finvestigate.dev"` |
+| `TURSO_DATABASE_URL` | Turso Cloud libSQL connection URL for hosted persistence | No (falls back to local SQLite) | — |
+| `TURSO_AUTH_TOKEN` | Turso Cloud authentication token | If remote Turso URL set | — |
+| `TURSO_STRICT` | If `true`, throws on Turso connection error instead of falling back to SQLite | No | `false` |
+| `API_SECRET_KEY` | Secret token authorizing mutating attack endpoints | Production only | — |
 | `PORT` | HTTP server listening port | No | `3001` |
-| `NODE_ENV` | Application environment (`development`, `production`, `test`) | No | `development` |
-| `ALLOWED_ORIGINS` | Comma-separated list of permitted CORS origins | No | `http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000` |
-
-> [!IMPORTANT]
-> **Graceful LLM Degradation:** The application functions with **100% test pass rate even if no Gemini API key is provided**. If `GEMINI_API_KEY` is missing, invalid, or rate-limited, the system automatically and gracefully degrades to its deterministic grounding engine (`mode: "deterministic_fallback"`), ensuring zero crashes or blank screens during judging, CI, and offline demos.
+| `NODE_ENV` | Runtime environment (`development`, `production`, `test`) | No | `development` |
+| `ALLOWED_ORIGINS` | Permitted CORS origins (comma-separated) | No | `http://localhost:5173, http://localhost:3000` |
+| `LOG_LEVEL` | Structured logging verbosity (`debug`, `info`, `warn`, `silent`) | No | `info` (silent in test) |
 
 ---
 
-## Persistence Architecture
+## Production & Container Deployment
 
-FINVESTIGATE implements a repository pattern with dual database adapters:
-
-- **Local Development (Default): SQLite via `better-sqlite3` (`data/finvestigate.db`):** Zero-setup, fully offline-capable persistence layer for local development and CI requiring zero credentials or external network access. Runs in WAL mode with foreign keys enabled, composite primary keys `(run_id, <id>)`, and immutable investigation runs. The local SQLite file is generated at runtime and ignored by Git.
-- **Production: Turso Cloud via `@libsql/client`:** Activated automatically when `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` are configured. Connects to Turso Cloud (libSQL hosted database in AWS AP South Mumbai) with atomic write batches. If Turso fails to initialize (e.g. invalid credentials or network outage), the repository automatically falls back to local SQLite to preserve availability.
-- **Evidence & Reproducibility Fixtures:** The repository retains versioned ground-truth and cache fixtures under `data/cache/` (SEC ticker maps and historical facts), `data/curated/` (pre-verified benchmark company JSONs), and `data/raw/` (cached raw SEC EDGAR XBRL filings).
-
----
-
-## Running the Application
-
-### Development Mode (Dual Process)
-
-Start the Express backend and the Vite frontend in separate terminal sessions:
+### Local Production Build
 
 ```bash
-# Terminal 1: Express API backend (Runs on http://localhost:3001)
-npm run dev:api
+# 1. Build frontend SPA and compile backend TypeScript
+npm run build:all
 
-# Terminal 2: Vite React Frontend (Runs on http://localhost:5173)
-npm run dev:web
-```
-
-### Production Mode (Single Process)
-
-In production, the backend serves both the REST API and the compiled React SPA static assets from `dist/`:
-
-```bash
-# 1. Build the frontend SPA and compile the backend TypeScript
-npm run build
-npm run build:api
-
-# 2. Launch the unified production server
+# 2. Launch unified production server on :3001
 npm start
 ```
 
-The production server listens on `http://localhost:3001` (or `$PORT`) and serves:
-- Static frontend application at `/`
-- Backend API at `/api/*`
-- Health check endpoints at `/health` and `/api/health`
-
----
-
-## Available Scripts
-
-| Command | Purpose | Verification Status |
-|---|---|---|
-| `npm run dev:api` | Starts Express backend in development mode with hot reload via `tsx` | Verified in manifest |
-| `npm run dev:web` | Starts Vite React frontend development server | Verified in manifest |
-| `npm run build` | Runs TypeScript typecheck and compiles frontend SPA into `dist/` | Verified (Exit Code 0) |
-| `npm run build:api` | Compiles server TypeScript into `server-dist/` using `tsconfig.server.json` | Verified (Exit Code 0) |
-| `npm start` | Builds API and launches production Node.js server with static SPA serving | Verified in manifest |
-| `npm test` | Executes full Vitest test suite (110 tests across 15 test files) | Verified (110/110 passed, Exit Code 0) |
-| `npm run test:watch` | Runs Vitest in interactive watch mode | Verified in manifest |
-| `npm run test:e2e` | Executes production end-to-end verification suite against live server instance | Verified (11/11 passed, Exit Code 0) |
-| `npm run benchmark:llm` | Runs LLM grounding and hallucination benchmark suite | Verified in manifest |
-| `npm run typecheck` | Typechecks the entire TypeScript codebase without emitting JS | Verified (Exit Code 0) |
-
----
-
-## Testing & Verification
-
-FINVESTIGATE maintains an evidence-backed verification suite covering forensic invariants, citation validation, adversarial scenarios, and production deployment readiness:
+Alternatively, to build tiers individually:
 
 ```bash
-# Run complete test suite (110 tests across 15 test files)
-npm test
-
-# Run production end-to-end verification suite
-npm run test:e2e
+npm run build       # Compiles client SPA to dist/
+npm run build:api   # Compiles backend TypeScript to server-dist/
+node server-dist/server/api/server.js
 ```
 
-### Test Suite Organization
+### Docker Multi-Stage Container
 
-- **Forensic Invariant Tests (`tests/forensic/`):** Verifies data consistency across SEC EDGAR XBRL filings, mathematical derivations, citation lineage, and cross-company rejection guards.
-- **Integration Tests (`tests/integration/`):** Validates database adapters (SQLite and Turso), evidence store caching, live SEC EDGAR ingestion, and LLM debate orchestration with fallback.
-- **Security & Mutation Tests (`tests/security/`):** Tests adversarial attack injection, schema validation, and mutation endpoint authentication rules.
-- **Unit Tests (`tests/unit/`):** Validates anomaly detection rules, financial formulas, fundamental scoring, and reference validation.
-- **Production E2E Verification (`scripts/verify-prod-e2e.ts`):** Spawns the compiled production server, tests dual health checks, static asset delivery, full ticker retrieval, segregated audit statistics, and mutation authorization enforcement.
+The included multi-stage `Dockerfile` uses Node 22 Alpine, compiles client assets, prunes dev dependencies, runs an unprivileged `node` user, and includes a container healthcheck:
+
+```bash
+# Build and run production container
+docker build -t finvestigate .
+docker run -p 3001:3001 -e PORT=3001 finvestigate
+```
+
+### Vercel Serverless Deployment
+
+Finvestigate includes native Vercel configuration (`vercel.json` and `api/index.ts`):
+
+- **Build Command**: `npm run build`
+- **Output Directory**: `dist`
+- **Serverless API Function**: Routes `/api/*` and `/health` requests to the Express backend handler in `api/index.ts` (configured for Turso hosted persistence).
+
+---
+
+## Developer Scripts & Testing
+
+| Command | Status | Purpose |
+|---|---|---|
+| `npm run dev:api` | Verified in manifest | Starts backend in development mode with hot reload (`tsx`) |
+| `npm run dev:web` | Verified in manifest | Starts Vite React frontend development server (`vite`) |
+| `npm run build` | Verified (Exit 0) | Compiles client SPA to `dist/` with typechecking |
+| `npm run build:api` | Verified (Exit 0) | Compiles server TypeScript to `server-dist/` |
+| `npm run build:all` | Verified (Exit 0) | Compiles both client SPA and server TypeScript |
+| `npm run clean:api` | Verified (Exit 0) | Removes the compiled `server-dist/` directory |
+| `npm run typecheck` | Verified (Exit 0) | Typechecks full codebase without emitting assets (`tsc --noEmit`) |
+| `npm start` | Verified in manifest | Compiles server TypeScript and launches unified production server |
+| `npm test` | Verified (Exit 0) | Executes full Vitest suite (117 tests across 16 files — 100% pass) |
+| `npm run test:watch` | Verified in manifest | Runs Vitest in interactive watch mode |
+| `npm run test:e2e` | Verified (Exit 0) | Runs production end-to-end verification against live server instance (11/11 pass) |
+| `npm run benchmark:llm` | Verified in manifest | Runs LLM grounding and hallucination benchmark suite |
+
+### Test Suite Architecture
+
+The test suite covers 117 tests across 16 test files with 100% pass rate:
+
+- **Unit Tests (`tests/unit/` — 5 files, 35 tests)**: Validates anomaly rules, financial formulas, fundamental scoring, reference integrity, and deterministic forensic models (Beneish M-Score, Altman Z-Score, Sloan Accruals, Piotroski F-Score).
+- **Forensic & Invariant Tests (`tests/forensic/` — 4 files, 40 tests)**: Enforces accounting invariants, semantic consistency, source reconciliation, and 3-surface verification gate rules.
+- **Integration Tests (`tests/integration/` — 6 files, 34 tests)**: Validates database repository adapters (SQLite & Turso), evidence store caching, live SEC EDGAR ingestion, LLM debate orchestration, and SSE streaming / search.
+- **Security Tests (`tests/security/` — 1 file, 8 tests)**: Validates adversarial attack injection, schema constraints, and mutation endpoint authentication policies.
+- **Production E2E Verification (`scripts/verify-prod-e2e.ts`)**: Spawns compiled production server, validates dual health endpoints, static asset delivery, full ticker retrieval, segregated audit telemetry, and mutation authorization enforcement (11/11 assertions pass).
 
 ---
 
@@ -268,41 +207,31 @@ npm run test:e2e
 ```
 Finvestigate/
 ├── src/
-│   ├── client/                    # Frontend Single Page Application (React 19, Vite, Vanilla CSS)
-│   │   ├── components/            # Modular UI components (DebatePanel, AttackCenter, TrustScoreboard, etc.)
+│   ├── client/                    # React 19 Single Page Application
+│   │   ├── components/            # Terminal tab components (ExecutiveOverview, ForensicRadar, etc.)
 │   │   ├── types/                 # Client UI view models & types
-│   │   ├── main.tsx               # React SPA root component & state orchestrator
-│   │   └── styles.css             # Vanilla CSS design system & styles
-│   ├── server/                    # Backend service layer (Express 5 REST API)
-│   │   ├── api/                   # API server entry, static SPA routing, CORS, rate limiting & mutation auth
+│   │   ├── main.tsx               # SPA root component & state orchestrator
+│   │   └── styles.css             # Terminal design system & print styles
+│   ├── server/                    # Express 5 REST API & backend services
+│   │   ├── api/                   # Server entry, routing, CORS, rate limiting & mutation auth
 │   │   ├── application/           # Evidence store & pipeline orchestration services
-│   │   ├── domain/                # Financial calculations, findings, scoring & verification gates
-│   │   ├── infrastructure/        # External integrations
-│   │   │   ├── db/                # Relational DB repositories (SqliteAdapter, TursoAdapter, fallback)
-│   │   │   ├── llm/               # Multi-agent courtroom debate orchestrator, agents & fallback
-│   │   │   └── sources/           # SEC EDGAR XBRL & BSE/Ind AS statutory ingestion adapters
-│   │   └── types/                 # Server domain & DB entity schemas
-│   └── shared/                    # Universal cross-tier Zod schemas, constants & utilities
+│   │   ├── domain/                # Financial math, forensic models & verification gates
+│   │   └── infrastructure/        # DB repositories (SQLite/Turso), LLM debate, and SEC/BSE sources
+│   └── shared/                    # Universal cross-tier Zod schemas, constants & types
 ├── data/
-│   ├── cache/                     # Cached SEC ticker maps and historical facts (reproducibility fixture)
-│   ├── curated/                   # Curated benchmarks (NVDA, AAPL, MSFT, AMD, GOOGL, INTC, RELIANCE, etc.)
-│   ├── finvestigate.db            # Local SQLite database (runtime-generated & auto-seeded; git-ignored)
-│   └── raw/                       # Cached raw SEC EDGAR XBRL facts (reproducibility fixture)
-├── tests/                         # Vitest test suites (110 tests across 15 test files — 100% passing)
-│   ├── forensic/                  # Forensic invariant & verification tests (5 files)
-│   ├── integration/               # Database (SQLite & Turso), evidence store, EDGAR & LLM integration tests (5 files)
+│   ├── cache/                     # Cached SEC ticker maps and historical facts
+│   ├── curated/                   # Curated US filings (NVDA, AAPL, MSFT, AMD, GOOGL, INTC)
+│   ├── finvestigate.db            # Local SQLite database (runtime-generated; git-ignored)
+│   └── raw/                       # Cached raw SEC EDGAR XBRL facts
+├── tests/                         # Vitest test suites (117 tests across 16 test files)
+│   ├── forensic/                  # Forensic invariant, semantic consistency & verification tests (4 files)
+│   ├── integration/               # Database, evidence store, EDGAR & LLM streaming/search tests (6 files)
 │   ├── security/                  # Adversarial attack API & mutation auth tests (1 file)
-│   └── unit/                      # Anomaly rules, calculations & scorer unit tests (4 files)
-├── scripts/
-│   ├── verify-prod-e2e.ts         # Production end-to-end verification test suite
-│   ├── benchmark.ts               # LLM grounding & hallucination benchmarks
-│   ├── check-reliance.ts          # BSE statutory verification utility
-│   └── reconcile-sources.ts       # Source data reconciliation utility
-├── dist/                          # Compiled frontend production assets (git-ignored)
-├── server-dist/                   # Compiled backend Node.js production code (git-ignored)
-├── docs/                          # Forensic reports, schema audits, and remediation baselines
+│   └── unit/                      # Anomaly rules, calculations, forensic models & scorer unit tests (5 files)
+├── scripts/                       # Production E2E verification and LLM benchmarking utilities
+├── Dockerfile                     # Multi-stage Node 22 Alpine production container definition
 ├── LICENSE                        # MIT License
-└── README.md                      # System architecture & evaluation guide
+└── package.json                   # Project metadata, scripts, and dependencies
 ```
 
 ---

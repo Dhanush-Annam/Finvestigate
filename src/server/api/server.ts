@@ -1,11 +1,16 @@
 import cors from "cors";
 import express from "express";
+import helmet from "helmet";
+import { randomUUID } from "node:crypto";
 import { existsSync } from "node:fs";
 import { resolve, join } from "node:path";
+import pino from "pino";
+import { pinoHttp } from "pino-http";
 import { z } from "zod";
 import { loadInvestigation } from "../application/evidence-store.js";
 import { getRepository } from "../infrastructure/db/repository.js";
 import { executeAdversarialAttack, isVerificationPass } from "../domain/verification.js";
+import { searchCompanies } from "../infrastructure/sources/live-cik.js";
 
 // Safely load environment configuration in non-test / standalone environments
 if (typeof (process as any).loadEnvFile === "function") {
@@ -15,6 +20,11 @@ if (typeof (process as any).loadEnvFile === "function") {
     // Ignore missing .env file
   }
 }
+
+export const logger = pino({
+  level: process.env.LOG_LEVEL || (process.env.NODE_ENV === "test" ? "silent" : "info"),
+  timestamp: pino.stdTimeFunctions.isoTime,
+});
 
 const DEFAULT_ALLOWED_ORIGINS = [
   "http://localhost:5173",
@@ -39,11 +49,29 @@ export function getCorsOptions(): cors.CorsOptions {
     },
     credentials: true,
     methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-API-Key"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-API-Key", "X-Request-ID"],
   };
 }
 
 export const app = express();
+
+// Security headers with Helmet
+app.use(
+  helmet({
+    contentSecurityPolicy: false, // Allows Vite and inline analytical dashboards
+    crossOriginEmbedderPolicy: false,
+  })
+);
+
+// Structured HTTP logging with Pino
+app.use(
+  pinoHttp({
+    logger,
+    autoLogging: process.env.NODE_ENV !== "test",
+    genReqId: (req) => (req.headers["x-request-id"] as string) || randomUUID(),
+  })
+);
+
 app.use(cors(getCorsOptions()));
 app.use(express.json({ limit: "50kb" }));
 
@@ -88,7 +116,7 @@ interface RateLimitRecord {
 const ipRateLimits = new Map<string, RateLimitRecord>();
 
 /**
- * Fixed-window request rate limiter by client IP.
+ * Sliding-window request rate limiter by client IP.
  * Enforces maxRequests per discrete windowMs epoch (default: 120 req / 60s).
  */
 export function rateLimiter(maxRequests = 120, windowMs = 60_000) {
@@ -129,7 +157,58 @@ export const AttackBodySchema = z.object({
 });
 
 app.get(["/health", "/api/health"], (_request, response) => {
-  response.json({ status: "ok", service: "finvestigate-api" });
+  response.json({ status: "ok", service: "finvestigate-api", version: "1.0.0" });
+});
+
+// Universal Equities Autocomplete Search
+app.get("/api/search", async (request, response) => {
+  try {
+    const q = typeof request.query.q === "string" ? request.query.q : "";
+    const results = await searchCompanies(q);
+    response.json({ results });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Search error.";
+    response.status(500).json({ error: message, results: [] });
+  }
+});
+
+// Server-Sent Events (SSE) Live Progress & Token Streaming
+app.get("/api/investigations/:ticker/stream", async (request, response) => {
+  const ticker = Array.isArray(request.params.ticker) ? request.params.ticker[0] : request.params.ticker;
+
+  response.setHeader("Content-Type", "text/event-stream");
+  response.setHeader("Cache-Control", "no-cache, no-transform");
+  response.setHeader("Connection", "keep-alive");
+  response.setHeader("X-Accel-Buffering", "no");
+
+  if (typeof (response as any).flushHeaders === "function") {
+    (response as any).flushHeaders();
+  }
+
+  let closed = false;
+  request.on("close", () => {
+    closed = true;
+  });
+
+  const sendEvent = (event: string, data: any) => {
+    if (closed) return;
+    response.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+  };
+
+  try {
+    sendEvent("progress", { stage: "initializing", progress: 5, message: `Initializing investigation for ${ticker.toUpperCase()}...` });
+
+    const investigation = await loadInvestigation(ticker, (stage, progress, message) => {
+      sendEvent("progress", { stage, progress, message });
+    });
+
+    sendEvent("complete", investigation);
+    response.end();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unable to stream investigation.";
+    sendEvent("error", { error: message });
+    response.end();
+  }
 });
 
 app.get("/api/verification-stats", async (request, response) => {
@@ -269,15 +348,19 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
 
 let serverInstance: ReturnType<typeof app.listen> | null = null;
 if (process.env.NODE_ENV !== "test" && !process.env.VERCEL) {
-  serverInstance = app.listen(PORT, () => console.log(`FINVESTIGATE API listening on http://localhost:${PORT}`));
+  serverInstance = app.listen(PORT, () => logger.info(`Finvestigate API listening on http://localhost:${PORT}`));
 
-  const handleShutdown = () => {
+  const handleShutdown = (signal: string) => {
+    logger.info(`Received ${signal}. Shutting down gracefully...`);
     if (serverInstance) {
       serverInstance.close(() => {
+        logger.info("HTTP server closed cleanly.");
         process.exit(0);
       });
+    } else {
+      process.exit(0);
     }
   };
-  process.on("SIGTERM", handleShutdown);
-  process.on("SIGINT", handleShutdown);
+  process.on("SIGTERM", () => handleShutdown("SIGTERM"));
+  process.on("SIGINT", () => handleShutdown("SIGINT"));
 }

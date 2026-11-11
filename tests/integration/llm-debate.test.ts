@@ -92,10 +92,16 @@ describe("Constrained AI Debate System", () => {
   it("falls back gracefully to deterministic debate when API key is missing", async () => {
     const origKey = process.env.GEMINI_API_KEY;
     const origGenAiKey = process.env.GOOGLE_GENAI_API_KEY;
+    const origOpenAiKey = process.env.OPENAI_API_KEY;
+    const origLlmKey = process.env.LLM_API_KEY;
     delete process.env.GEMINI_API_KEY;
     delete process.env.GOOGLE_GENAI_API_KEY;
+    delete process.env.OPENAI_API_KEY;
+    delete process.env.LLM_API_KEY;
     process.env.GEMINI_API_KEY = "";
     process.env.GOOGLE_GENAI_API_KEY = "";
+    process.env.OPENAI_API_KEY = "";
+    process.env.LLM_API_KEY = "";
 
     try {
       const debate = await generateConstrainedAIDebate(mockInvestigation);
@@ -105,6 +111,8 @@ describe("Constrained AI Debate System", () => {
     } finally {
       if (origKey !== undefined) process.env.GEMINI_API_KEY = origKey; else delete process.env.GEMINI_API_KEY;
       if (origGenAiKey !== undefined) process.env.GOOGLE_GENAI_API_KEY = origGenAiKey; else delete process.env.GOOGLE_GENAI_API_KEY;
+      if (origOpenAiKey !== undefined) process.env.OPENAI_API_KEY = origOpenAiKey; else delete process.env.OPENAI_API_KEY;
+      if (origLlmKey !== undefined) process.env.LLM_API_KEY = origLlmKey; else delete process.env.LLM_API_KEY;
     }
   }, 15000);
 

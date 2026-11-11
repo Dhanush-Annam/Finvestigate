@@ -155,7 +155,8 @@
       "explanation": "The available annual filing data directly supports strong revenue and operating cash-flow growth, and the cited guidance comparison was favorable. The caution case is weaker on the current evidence: receivables growth was broadly in line with revenue, while its absolute increase still merits follow-up with quarterly collection and customer-concentration data.",
       "bullScore": 9.4,
       "bearScore": 4.0
-    }
+    },
+    "mode": "ai_grounded"
   },
   "facts": [
     { "factId": "NVDA-REV-FY2025", "company": "NVDA", "metric": "revenue", "period": { "label": "FY2025", "endDate": "2025-01-26", "kind": "annual" }, "value": 130497000000, "unit": "USD", "source": "NVIDIA FY2026 Form 10-K, Consolidated Statements of Income", "sourceUrl": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm", "type": "FACT", "availability": "reported" },
