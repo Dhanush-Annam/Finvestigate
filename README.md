@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](package.json)
-[![Tests](https://img.shields.io/badge/tests-122%2F122%20passing-brightgreen.svg)](package.json)
+[![Tests](https://img.shields.io/badge/tests-117%2F117%20passing-brightgreen.svg)](package.json)
 
 Deterministic financial investigation engine and adversarial multi-agent debate platform for SEC EDGAR and BSE statutory filings.
 
@@ -26,7 +26,7 @@ Finvestigate eliminates Large Language Model (LLM) financial hallucinations by e
 
 ### Core Pipelines
 
-- **Dual Regulatory Ingestion**: Ingests annual SEC EDGAR XBRL filings (`companyfacts`, 10-K duration tags filtered to $\Delta t \in [350, 380]$ days with restatement deduplication) and Indian statutory accounting filings (BSE / Ind AS).
+- **Dual Regulatory Ingestion**: Ingests annual SEC EDGAR XBRL filings (`companyfacts`, 10-K duration tags filtered to 350–380 days with restatement deduplication) and Indian statutory accounting filings (BSE / Ind AS).
 - **Zero-LLM Math Core**: Financial ratios (YoY growth, gross margin, operating margin, Free Cash Flow) are computed strictly via pure TypeScript domain functions with runtime Zod schema validation and sign-flip guards.
 - **3-Surface Verification Barrier**: Intercepts ungrounded metrics, cross-company citation contamination, missing calculation references, and numeric drift before claims can reach presentations or debate outputs.
 - **Constrained Tri-Agent Debate**: An adversarial Bull vs. Bear debate moderated by an impartial Judge agent, featuring 1-turn automated citation self-correction and atomic fallback to deterministic synthesis if verification fails.
@@ -67,7 +67,7 @@ The backend exposes a REST API on port `3001` (configurable via `PORT`):
 | Endpoint | Method | Auth | Description |
 |---|---|---|---|
 | `/health`, `/api/health` | `GET` | Public | Service health check returning `{ status: "ok", service: "finvestigate-api", version: "1.0.0" }` |
-| `/api/search` | `GET` | Public | Universal equities autocomplete across US and Indian tickers (`?q=<query>`) |
+| `/api/search` | `GET` | Public | Universal equities autocomplete across US (SEC) and Indian (BSE) tickers (`?q=<query>`) |
 | `/api/investigations/:ticker` | `GET` | Public | Full investigation payload (facts, ratios, forensic models, debate) |
 | `/api/investigations/:ticker/stream` | `GET` | Public | Server-Sent Events (SSE) live investigation progress and token stream |
 | `/api/verification-stats` | `GET` | Public | Verification audit statistics and rejection telemetry (supports optional `?ticker=<ticker>`) |
@@ -75,6 +75,8 @@ The backend exposes a REST API on port `3001` (configurable via `PORT`):
 
 > [!NOTE]
 > Mutation endpoints require `API_SECRET_KEY` passed via `X-API-Key` or `Authorization: Bearer <key>` in production. In development mode, calls are permitted with a default policy header when `API_SECRET_KEY` is unset.
+>
+> The API enforces a sliding-window rate limit (120 requests per 60 seconds per client IP), returning HTTP `429 Too Many Requests` with `retryAfterMs` on threshold breach.
 
 ---
 
@@ -103,18 +105,22 @@ npm run dev:web   # Terminal 2
 ```
 
 > [!TIP]
-> **Zero-Config Offline Mode:** Finvestigate operates out-of-the-box using local SQLite (`better-sqlite3`). If `GEMINI_API_KEY` is omitted, the engine automatically degrades to its deterministic debate generator with 100% test pass rates and zero external dependencies.
+> **Zero-Config Offline Mode:** Finvestigate operates out-of-the-box using local SQLite (`better-sqlite3`). If external LLM API keys (`OPENAI_API_KEY` or `GEMINI_API_KEY`) are omitted, the engine automatically degrades to its deterministic debate generator with 100% test pass rates and zero external dependencies.
 
 ---
 
 ## Environment Configuration
 
+Finvestigate supports dual LLM backends: OpenAI-compatible providers (Option A) and Google Gemini (Option B). When both are omitted, the engine automatically engages deterministic synthesis.
+
 Configure variables in `.env` as required:
 
 | Variable | Description | Required | Default |
 |---|---|---|---|
-| `GEMINI_API_KEY` | Google AI Studio API key for multi-agent debate synthesis (also accepts `GOOGLE_GENAI_API_KEY`) | No (deterministic fallback) | — |
-| `LLM_MODEL` | Gemini model ID for debate synthesis | No | `gemini-3.5-flash-lite` |
+| `OPENAI_API_KEY` | OpenAI-compatible API key (supporting OpenAI, Ollama, Groq, or proxies) | No (deterministic fallback) | — |
+| `OPENAI_BASE_URL` | Base URL for OpenAI-compatible completions | No | `https://api.openai.com/v1` |
+| `GEMINI_API_KEY` | Google AI Studio API key (also accepts `GOOGLE_GENAI_API_KEY`) | No (deterministic fallback) | — |
+| `LLM_MODEL` | Model identifier for debate synthesis | No | `auto:fast` (OpenAI) / `gemini-3.5-flash-lite` (Gemini) |
 | `SEC_USER_AGENT` | User-Agent header complying with SEC EDGAR fair access policy | No | `"Finvestigate Research contact@finvestigate.dev"` |
 | `TURSO_DATABASE_URL` | Turso Cloud libSQL connection URL for hosted persistence | No (falls back to local SQLite) | — |
 | `TURSO_AUTH_TOKEN` | Turso Cloud authentication token | If remote Turso URL set | — |
@@ -123,7 +129,7 @@ Configure variables in `.env` as required:
 | `PORT` | HTTP server listening port | No | `3001` |
 | `NODE_ENV` | Runtime environment (`development`, `production`, `test`) | No | `development` |
 | `ALLOWED_ORIGINS` | Permitted CORS origins (comma-separated) | No | `http://localhost:5173, http://localhost:3000` |
-| `LOG_LEVEL` | Logging verbosity (`debug`, `info`, `warn`, `silent`) | No | `info` (silent in test) |
+| `LOG_LEVEL` | Structured logging verbosity (`debug`, `info`, `warn`, `silent`) | No | `info` (silent in test) |
 
 ---
 
@@ -149,6 +155,8 @@ node server-dist/server/api/server.js
 
 ### Docker Multi-Stage Container
 
+The included multi-stage `Dockerfile` uses Node 22 Alpine, compiles client assets, prunes dev dependencies, runs an unprivileged `node` user, and includes a container healthcheck:
+
 ```bash
 # Build and run production container
 docker build -t finvestigate .
@@ -167,29 +175,29 @@ Finvestigate includes native Vercel configuration (`vercel.json` and `api/index.
 
 ## Developer Scripts & Testing
 
-| Command | Purpose |
-|---|---|
-| `npm run dev:api` | Starts backend in development mode with hot reload (`tsx`) |
-| `npm run dev:web` | Starts Vite React frontend development server |
-| `npm run build` | Compiles client SPA to `dist/` with typechecking |
-| `npm run build:api` | Compiles server TypeScript to `server-dist/` |
-| `npm run build:all` | Compiles both client SPA and server TypeScript |
-| `npm run clean:api` | Removes the compiled `server-dist/` directory |
-| `npm run typecheck` | Typechecks full codebase without emitting assets |
-| `npm start` | Compiles server TypeScript and launches unified production server |
-| `npm test` | Executes full Vitest suite (122 tests across 17 files — 100% pass) |
-| `npm run test:watch` | Runs Vitest in interactive watch mode |
-| `npm run test:e2e` | Runs production end-to-end verification against live server instance |
-| `npm run benchmark:llm` | Runs LLM grounding and hallucination benchmark suite |
+| Command | Status | Purpose |
+|---|---|---|
+| `npm run dev:api` | Verified in manifest | Starts backend in development mode with hot reload (`tsx`) |
+| `npm run dev:web` | Verified in manifest | Starts Vite React frontend development server (`vite`) |
+| `npm run build` | Verified (Exit 0) | Compiles client SPA to `dist/` with typechecking |
+| `npm run build:api` | Verified (Exit 0) | Compiles server TypeScript to `server-dist/` |
+| `npm run build:all` | Verified (Exit 0) | Compiles both client SPA and server TypeScript |
+| `npm run clean:api` | Verified (Exit 0) | Removes the compiled `server-dist/` directory |
+| `npm run typecheck` | Verified (Exit 0) | Typechecks full codebase without emitting assets (`tsc --noEmit`) |
+| `npm start` | Verified in manifest | Compiles server TypeScript and launches unified production server |
+| `npm test` | Verified (Exit 0) | Executes full Vitest suite (117 tests across 16 files — 100% pass) |
+| `npm run test:watch` | Verified in manifest | Runs Vitest in interactive watch mode |
+| `npm run test:e2e` | Verified (Exit 0) | Runs production end-to-end verification against live server instance (11/11 pass) |
+| `npm run benchmark:llm` | Verified in manifest | Runs LLM grounding and hallucination benchmark suite |
 
 ### Test Suite Architecture
 
-The test suite covers 122 tests across 17 files with 100% pass rate:
+The test suite covers 117 tests across 16 test files with 100% pass rate:
 
-- **Unit Tests (`tests/unit/` — 5 files)**: Validates anomaly rules, financial formulas, fundamental scoring, reference integrity, and deterministic forensic models (Beneish M-Score, Altman Z-Score, Sloan Accruals, Piotroski F-Score).
-- **Forensic & Invariant Tests (`tests/forensic/` — 5 files)**: Enforces accounting invariants, source reconciliation, verification gate rules, and cross-company isolation.
-- **Integration Tests (`tests/integration/` — 6 files)**: Validates database repository adapters (SQLite & Turso), evidence store caching, live SEC EDGAR ingestion, LLM debate orchestration, and SSE streaming / search.
-- **Security Tests (`tests/security/` — 1 file)**: Validates adversarial attack injection, schema constraints, and mutation endpoint authentication policies.
+- **Unit Tests (`tests/unit/` — 5 files, 35 tests)**: Validates anomaly rules, financial formulas, fundamental scoring, reference integrity, and deterministic forensic models (Beneish M-Score, Altman Z-Score, Sloan Accruals, Piotroski F-Score).
+- **Forensic & Invariant Tests (`tests/forensic/` — 4 files, 40 tests)**: Enforces accounting invariants, semantic consistency, source reconciliation, and 3-surface verification gate rules.
+- **Integration Tests (`tests/integration/` — 6 files, 34 tests)**: Validates database repository adapters (SQLite & Turso), evidence store caching, live SEC EDGAR ingestion, LLM debate orchestration, and SSE streaming / search.
+- **Security Tests (`tests/security/` — 1 file, 8 tests)**: Validates adversarial attack injection, schema constraints, and mutation endpoint authentication policies.
 - **Production E2E Verification (`scripts/verify-prod-e2e.ts`)**: Spawns compiled production server, validates dual health endpoints, static asset delivery, full ticker retrieval, segregated audit telemetry, and mutation authorization enforcement (11/11 assertions pass).
 
 ---
@@ -212,16 +220,16 @@ Finvestigate/
 │   └── shared/                    # Universal cross-tier Zod schemas, constants & types
 ├── data/
 │   ├── cache/                     # Cached SEC ticker maps and historical facts
-│   ├── curated/                   # Curated benchmarks (NVDA, AAPL, MSFT, AMD, GOOGL, INTC, RELIANCE)
+│   ├── curated/                   # Curated US filings (NVDA, AAPL, MSFT, AMD, GOOGL, INTC)
 │   ├── finvestigate.db            # Local SQLite database (runtime-generated; git-ignored)
 │   └── raw/                       # Cached raw SEC EDGAR XBRL facts
-├── tests/                         # Vitest test suites (122 tests across 17 test files)
-│   ├── forensic/                  # Forensic invariant & verification tests
-│   ├── integration/               # Database, evidence store, EDGAR & LLM streaming/search tests
-│   ├── security/                  # Adversarial attack API & mutation auth tests
-│   └── unit/                      # Anomaly rules, calculations, forensic models & scorer unit tests
-├── scripts/                       # Production verification, benchmarking, and reconciliation utilities
-├── Dockerfile                     # Multi-stage production container definition
+├── tests/                         # Vitest test suites (117 tests across 16 test files)
+│   ├── forensic/                  # Forensic invariant, semantic consistency & verification tests (4 files)
+│   ├── integration/               # Database, evidence store, EDGAR & LLM streaming/search tests (6 files)
+│   ├── security/                  # Adversarial attack API & mutation auth tests (1 file)
+│   └── unit/                      # Anomaly rules, calculations, forensic models & scorer unit tests (5 files)
+├── scripts/                       # Production E2E verification and LLM benchmarking utilities
+├── Dockerfile                     # Multi-stage Node 22 Alpine production container definition
 ├── LICENSE                        # MIT License
 └── package.json                   # Project metadata, scripts, and dependencies
 ```
