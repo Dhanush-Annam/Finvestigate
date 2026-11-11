@@ -348,7 +348,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
 
 let serverInstance: ReturnType<typeof app.listen> | null = null;
 if (process.env.NODE_ENV !== "test" && !process.env.VERCEL) {
-  serverInstance = app.listen(PORT, () => logger.info(`FINVESTIGATE API listening on http://localhost:${PORT}`));
+  serverInstance = app.listen(PORT, () => logger.info(`Finvestigate API listening on http://localhost:${PORT}`));
 
   const handleShutdown = (signal: string) => {
     logger.info(`Received ${signal}. Shutting down gracefully...`);

@@ -168,7 +168,7 @@ async function benchmarkSingleAgent(
 }
 
 async function runFullBenchmark() {
-  console.log("=== FINVESTIGATE LLM BENCHMARK RUNNER ===");
+  console.log("=== Finvestigate LLM BENCHMARK RUNNER ===");
   console.log(`Comparing baseline gemini-3.5-flash-lite vs gemma-4-31b-it\n`);
 
   const repo = await getRepository();

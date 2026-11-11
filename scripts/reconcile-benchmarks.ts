@@ -10,7 +10,7 @@ import { resolve } from "node:path";
 
 async function runReleaseGate() {
   console.log("===============================================================================");
-  console.log("             FINVESTIGATE FORENSIC RELEASE GATE CERTIFICATION                  ");
+  console.log("             Finvestigate FORENSIC RELEASE GATE CERTIFICATION                  ");
   console.log("===============================================================================\n");
 
   const dbPath = resolve(process.cwd(), "data", "finvestigate.db");

@@ -2,6 +2,10 @@
 
 node_modules/
 
+# Documentation & reports
+
+docs/
+
 # Production builds & generated output
 
 dist/

@@ -62,7 +62,7 @@ function App() {
     if (window.location.pathname !== targetUrl) {
       window.history.pushState({ ticker: newTicker, tab: newTab }, "", targetUrl);
     }
-    document.title = `FINVESTIGATE — ${newTicker} [${newTab.toUpperCase()}]`;
+    document.title = `Finvestigate — ${newTicker} [${newTab.toUpperCase()}]`;
   };
 
   // Handle browser Back / Forward buttons
@@ -390,7 +390,7 @@ function App() {
           {/* Printable Report Section (Rendered strictly during window.print()) */}
           <div className="printable-audit-report-container">
             <header className="print-report-header">
-              <h1>FINVESTIGATE — Institutional Forensic Audit Dossier</h1>
+              <h1>Finvestigate — Institutional Forensic Audit Dossier</h1>
               <p>Company: {investigation.displayName} ({investigation.company}) | CIK / Identifier: {investigation.cik}</p>
               <p>Generated: {new Date().toISOString()} | Grounding Standard: 100% Audited Regulatory Disclosures</p>
             </header>

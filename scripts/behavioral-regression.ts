@@ -67,7 +67,7 @@ async function verifyFixture(ticker: keyof typeof EXPECTED) {
 }
 
 async function main() {
-  console.log("=== FINVESTIGATE ZERO-BEHAVIOR-CHANGE AUDIT ===");
+  console.log("=== Finvestigate ZERO-BEHAVIOR-CHANGE AUDIT ===");
   await verifyFixture("NVDA");
   await verifyFixture("AAPL");
   console.log("=== ALL FIXTURES 100% EQUIVALENT ===");
