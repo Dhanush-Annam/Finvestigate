@@ -76,6 +76,53 @@ export const GAAP_TAG_MAPPINGS: Record<string, string[]> = {
     "PaymentsToAcquirePropertyPlantAndEquipment",
     "PaymentsToAcquireProductiveAssets",
   ],
+  assets: [
+    "Assets",
+    "AssetsCurrentAndNoncurrent",
+  ],
+  liabilities: [
+    "Liabilities",
+    "LiabilitiesCurrentAndNoncurrent",
+    "LiabilitiesAndStockholdersEquity",
+  ],
+  currentAssets: [
+    "AssetsCurrent",
+  ],
+  currentLiabilities: [
+    "LiabilitiesCurrent",
+  ],
+  stockholdersEquity: [
+    "StockholdersEquity",
+    "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
+  ],
+  grossProfit: [
+    "GrossProfit",
+  ],
+  ebit: [
+    "OperatingIncomeLoss",
+  ],
+  operatingExpenses: [
+    "OperatingExpenses",
+  ],
+  researchAndDevelopment: [
+    "ResearchAndDevelopmentExpense",
+  ],
+  longTermDebt: [
+    "LongTermDebtNoncurrent",
+    "LongTermDebtAndCapitalLeaseObligations",
+    "LongTermDebt",
+  ],
+  inventory: [
+    "InventoryNet",
+    "InventoryGross",
+  ],
+  ppe: [
+    "PropertyPlantAndEquipmentNet",
+  ],
+  depreciation: [
+    "DepreciationAndAmortization",
+    "Depreciation",
+  ],
 };
 
 export const IFRS_TAG_MAPPINGS: Record<string, string[]> = {
@@ -101,6 +148,42 @@ export const IFRS_TAG_MAPPINGS: Record<string, string[]> = {
     "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities",
     "PurchaseOfPropertyPlantAndEquipment",
   ],
+  assets: [
+    "Assets",
+  ],
+  liabilities: [
+    "Liabilities",
+  ],
+  currentAssets: [
+    "CurrentAssets",
+  ],
+  currentLiabilities: [
+    "CurrentLiabilities",
+  ],
+  stockholdersEquity: [
+    "Equity",
+    "EquityAttributableToOwnersOfParent",
+  ],
+  grossProfit: [
+    "GrossProfit",
+  ],
+  ebit: [
+    "ProfitLossFromOperatingActivities",
+    "OperatingProfit",
+  ],
+  longTermDebt: [
+    "NonCurrentFinancialLiabilities",
+    "LongTermBorrowings",
+  ],
+  inventory: [
+    "Inventories",
+  ],
+  ppe: [
+    "PropertyPlantAndEquipment",
+  ],
+  depreciation: [
+    "DepreciationAndAmortisationExpense",
+  ],
 };
 
 const CACHE_DIR = resolve(process.cwd(), "data", "cache");
@@ -111,12 +194,24 @@ interface CachedEdgarFacts {
   facts: Fact[];
 }
 
+const memoryFactsCache = new Map<string, CachedEdgarFacts>();
+
 async function getCachedFacts(ticker: string): Promise<Fact[] | null> {
+  const norm = ticker.toLowerCase();
+
+  // 1. In-memory cache first
+  const mem = memoryFactsCache.get(norm);
+  if (mem && Date.now() - mem.timestamp < EDGAR_CACHE_TTL_MS) {
+    return mem.facts;
+  }
+
+  // 2. Disk cache
   try {
-    const cachePath = join(CACHE_DIR, `${ticker.toLowerCase()}_facts.json`);
+    const cachePath = join(CACHE_DIR, `${norm}_facts.json`);
     const raw = await readFile(cachePath, "utf8");
     const data = JSON.parse(raw) as CachedEdgarFacts;
     if (Date.now() - data.timestamp < EDGAR_CACHE_TTL_MS && Array.isArray(data.facts) && data.facts.length > 0) {
+      memoryFactsCache.set(norm, data);
       return data.facts;
     }
   } catch (_err) {
@@ -126,15 +221,25 @@ async function getCachedFacts(ticker: string): Promise<Fact[] | null> {
 }
 
 async function setCachedFacts(ticker: string, facts: Fact[]): Promise<void> {
+  const norm = ticker.toLowerCase();
+  const payload: CachedEdgarFacts = {
+    timestamp: Date.now(),
+    facts,
+  };
+  memoryFactsCache.set(norm, payload);
+
+  if (process.env.VERCEL) {
+    return; // Read-only serverless environment
+  }
+
   try {
     await mkdir(CACHE_DIR, { recursive: true });
-    const cachePath = join(CACHE_DIR, `${ticker.toLowerCase()}_facts.json`);
-    const payload: CachedEdgarFacts = {
-      timestamp: Date.now(),
-      facts,
-    };
+    const cachePath = join(CACHE_DIR, `${norm}_facts.json`);
     await writeFile(cachePath, JSON.stringify(payload, null, 2), "utf8");
-  } catch (err) {
+  } catch (err: any) {
+    if (err && (err.code === "EROFS" || err.code === "EACCES" || err.code === "EPERM")) {
+      return; // Fallback smoothly to memory cache
+    }
     console.warn(`Failed to write cache for ${ticker}:`, err instanceof Error ? err.message : err);
   }
 }
@@ -185,7 +290,7 @@ async function fetchWithRetry(url: string, headers: Record<string, string>, maxR
 export async function fetchLiveCompanyFacts(cik: string, ticker: string, displayName: string): Promise<Fact[] | null> {
   const normalizedTicker = ticker.toUpperCase();
 
-  // 1. Check disk cache first
+  // 1. Check disk / memory cache first
   const cached = await getCachedFacts(normalizedTicker);
   if (cached) {
     return cached;
@@ -243,7 +348,7 @@ export async function fetchLiveCompanyFacts(cik: string, ticker: string, display
           const days = (endTime - startTime) / (1000 * 60 * 60 * 24);
           return days >= 340 && days <= 390;
         } else {
-          // Instant fact (balance sheet e.g. receivables): end date year is fiscal year
+          // Instant fact (balance sheet e.g. receivables, assets): end date year is fiscal year
           return true;
         }
       });

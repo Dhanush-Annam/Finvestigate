@@ -5,6 +5,7 @@ import { DebateArgumentSchema } from "../../shared/types/index.js";
 import { generateLiveDebate } from "../infrastructure/llm/live-debate.js";
 import { isVerificationPass } from "../../shared/utils/diligence.js";
 import { PASS_RESULT_CODES } from "../../shared/constants/index.js";
+import { resolveCik } from "../infrastructure/sources/live-cik.js";
 
 export { isVerificationPass, PASS_RESULT_CODES };
 
@@ -80,7 +81,6 @@ export async function verifyClaim(
   surface?: "debate" | "finding" | "claim_check"
 ): Promise<VerifyResult> {
   let normalizedTicker = ticker.toUpperCase();
-  const { resolveCik } = await import("../infrastructure/sources/live-cik.js");
   const cikInfo = await resolveCik(ticker);
   if (cikInfo) {
     normalizedTicker = cikInfo.ticker.toUpperCase();

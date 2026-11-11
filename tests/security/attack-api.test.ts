@@ -8,6 +8,7 @@ describe("Real Backend Attack Execution API", () => {
   beforeAll(async () => {
     repo = await getRepository();
     await repo.seedCuratedData();
+    await repo.getInvestigation("NVDA");
   });
 
   it("Scenario 1 (fabricated_id): rejects non-existent reference and engages atomic fallback", async () => {
