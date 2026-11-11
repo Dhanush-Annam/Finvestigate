@@ -1,9 +1,20 @@
 import cors from "cors";
 import express from "express";
+import { existsSync } from "node:fs";
+import { resolve, join } from "node:path";
 import { z } from "zod";
 import { loadInvestigation } from "../application/evidence-store.js";
 import { getRepository } from "../infrastructure/db/repository.js";
 import { executeAdversarialAttack, isVerificationPass } from "../domain/verification.js";
+
+// Safely load environment configuration in non-test / standalone environments
+if (typeof (process as any).loadEnvFile === "function") {
+  try {
+    (process as any).loadEnvFile();
+  } catch {
+    // Ignore missing .env file
+  }
+}
 
 const DEFAULT_ALLOWED_ORIGINS = [
   "http://localhost:5173",
@@ -117,7 +128,7 @@ export const AttackBodySchema = z.object({
   ]).default("fabricated_id"),
 });
 
-app.get("/health", (_request, response) => {
+app.get(["/health", "/api/health"], (_request, response) => {
   response.json({ status: "ok", service: "finvestigate-api" });
 });
 
@@ -228,6 +239,23 @@ app.post("/api/investigations/:ticker/attack", requireMutationAuth, async (reque
   }
 });
 
+// Handle 404s for unmatched API routes
+app.all("/api/{*path}", (_req, res) => {
+  res.status(404).json({ error: "Endpoint not found" });
+});
+
+// Production SPA static file serving
+const distDir = resolve(process.cwd(), "dist");
+if (existsSync(distDir)) {
+  app.use(express.static(distDir));
+  app.get("{*path}", (req, res, next) => {
+    if (req.path.startsWith("/api") || req.path === "/health") {
+      return next();
+    }
+    res.sendFile(join(distDir, "index.html"));
+  });
+}
+
 // Error handling middleware for CORS rejections
 app.use((err: any, _req: express.Request, res: express.Response, next: express.NextFunction) => {
   if (err && err.message && err.message.includes("CORS policy")) {
@@ -237,6 +265,19 @@ app.use((err: any, _req: express.Request, res: express.Response, next: express.N
   next(err);
 });
 
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
+
+let serverInstance: ReturnType<typeof app.listen> | null = null;
 if (process.env.NODE_ENV !== "test" && !process.env.VERCEL) {
-  app.listen(3001, () => console.log("FINVESTIGATE API listening on http://localhost:3001"));
+  serverInstance = app.listen(PORT, () => console.log(`FINVESTIGATE API listening on http://localhost:${PORT}`));
+
+  const handleShutdown = () => {
+    if (serverInstance) {
+      serverInstance.close(() => {
+        process.exit(0);
+      });
+    }
+  };
+  process.on("SIGTERM", handleShutdown);
+  process.on("SIGINT", handleShutdown);
 }
