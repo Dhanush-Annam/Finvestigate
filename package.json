@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "scripts": {
     "dev:api": "tsx watch src/server/api/server.ts",
     "dev:web": "vite",
@@ -10,6 +14,7 @@
     "clean:api": "node -e \"fs.rmSync('server-dist', { recursive: true, force: true })\"",
     "prebuild:api": "npm run clean:api",
     "build:api": "tsc --project tsconfig.server.json",
+    "build:all": "npm run build && npm run build:api",
     "typecheck": "tsc --noEmit",
     "start": "npm run build:api && node server-dist/server/api/server.js",
     "test": "vitest run",
