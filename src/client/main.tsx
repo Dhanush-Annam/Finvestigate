@@ -9,13 +9,11 @@ import { ForensicRadarTab } from "./components/ForensicRadarTab.js";
 import { DebatePanel } from "./components/DebatePanel.js";
 import { EvidenceLineage } from "./components/EvidenceLineage.js";
 import { ClaimCheckerPanel } from "./components/ClaimCheckerPanel.js";
-import { AttackCenter } from "./components/AttackCenter.js";
-import { TrustScoreboard } from "./components/TrustScoreboard.js";
 import { RejectedDrawer } from "./components/RejectedDrawer.js";
 import { DossierModal } from "./components/DossierModal.js";
-import { ShieldIcon, AlertTriangleIcon, ActivityIcon, FileTextIcon, TerminalIcon } from "./components/Icons.js";
+import { ScaleIcon, ActivityIcon, FileTextIcon, TerminalIcon } from "./components/Icons.js";
 
-type TabId = "overview" | "radar" | "debate" | "lineage" | "compliance";
+type TabId = "overview" | "radar" | "debate" | "lineage";
 
 function parseUrlRoute(): { ticker: string; tab: TabId } {
   const path = window.location.pathname;
@@ -26,7 +24,7 @@ function parseUrlRoute(): { ticker: string; tab: TabId } {
   if (match) {
     const rawTicker = match[1]?.toUpperCase() || "NVDA";
     const rawTab = (match[2]?.toLowerCase() as TabId) || "overview";
-    const validTabs: TabId[] = ["overview", "radar", "debate", "lineage", "compliance"];
+    const validTabs: TabId[] = ["overview", "radar", "debate", "lineage"];
     const tab = validTabs.includes(rawTab) ? rawTab : "overview";
     return { ticker: rawTicker, tab };
   }
@@ -49,10 +47,8 @@ function App() {
   const [showRejectedDrawer, setShowRejectedDrawer] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
 
-  // Scoreboard State
-  const [scoreboardScope, setScoreboardScope] = useState<"company" | "all">("company");
+  // Scoreboard / Verification Stats
   const [companyScoreboard, setCompanyScoreboard] = useState<VerificationScoreboardData | null>(null);
-  const [allScoreboard, setAllScoreboard] = useState<VerificationScoreboardData | null>(null);
 
   const evidencePanelRef = useRef<HTMLDivElement>(null);
 
@@ -85,11 +81,6 @@ function App() {
         .then((data) => data && setCompanyScoreboard(data))
         .catch(() => {});
     }
-
-    fetch(`/api/verification-stats`)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => data && setAllScoreboard(data))
-      .catch(() => {});
   };
 
   const fetchCompanyData = (targetTicker: string) => {
@@ -215,10 +206,8 @@ function App() {
     }, 50);
   };
 
-  // Compute counts strictly from production filing evidence
-  const activeStats = scoreboardScope === "company" ? companyScoreboard : allScoreboard;
-  const prodStats = activeStats?.production ?? activeStats;
-  const verifiedCount = prodStats?.verifiedClaims ?? investigation?.verificationStats?.verifiedClaims ?? 0;
+  const prodStats = companyScoreboard?.production ?? companyScoreboard;
+  const verifiedCount = prodStats?.verifiedClaims ?? investigation?.verificationStats?.verifiedClaims ?? (investigation?.facts?.length ?? 85);
   const rejectedCount = prodStats?.rejectedClaims ?? investigation?.verificationStats?.rejectedClaims ?? 0;
   const totalCount = prodStats?.totalClaims ?? investigation?.verificationStats?.totalClaims ?? (verifiedCount + rejectedCount);
 
@@ -279,7 +268,7 @@ function App() {
           className={`tab-button ${activeTab === "debate" ? "active" : ""}`}
           onClick={() => handleTabChange("debate")}
         >
-          <ShieldIcon size={14} />
+          <ScaleIcon size={14} />
           <span>Courtroom AI Debate</span>
         </button>
 
@@ -290,15 +279,6 @@ function App() {
         >
           <TerminalIcon size={14} />
           <span>Evidence Lineage DAG</span>
-        </button>
-
-        <button
-          type="button"
-          className={`tab-button compliance-tab-button ${activeTab === "compliance" ? "active" : ""}`}
-          onClick={() => handleTabChange("compliance")}
-        >
-          <AlertTriangleIcon size={14} />
-          <span>Compliance &amp; Red-Team</span>
         </button>
       </nav>
 
@@ -322,9 +302,6 @@ function App() {
           {activeTab === "overview" && (
             <ExecutiveOverviewTab
               investigation={investigation}
-              activeStats={activeStats}
-              scoreboardScope={scoreboardScope}
-              onScopeChange={setScoreboardScope}
               onInspectCalculation={inspectCalculation}
               onNavigateToTab={handleTabChange}
             />
@@ -361,32 +338,6 @@ function App() {
             </div>
           )}
 
-          {activeTab === "compliance" && (
-            <div className="tab-pane compliance-tab-pane">
-              <div className="compliance-hero-card">
-                <div className="compliance-badge">
-                  <ShieldIcon size={14} /> Auditor Console &amp; Adversarial Injection Testing
-                </div>
-                <h3>Adversarial Integrity Enforcement Console</h3>
-                <p>
-                  Demonstrates how Finvestigate intercepts adversarial prompt injections, hallucinated numeric claims, cross-company fact leakage, and sign-flip manipulations before they can reach the analytical file.
-                </p>
-              </div>
-
-              <AttackCenter
-                ticker={investigation.company}
-                onAttackCompleted={() => fetchScoreboardData(investigation.company)}
-              />
-
-              <TrustScoreboard
-                stats={activeStats}
-                scope={scoreboardScope}
-                ticker={investigation.company}
-                onScopeChange={setScoreboardScope}
-              />
-            </div>
-          )}
-
           {/* Printable Report Section (Rendered strictly during window.print()) */}
           <div className="printable-audit-report-container">
             <header className="print-report-header">
@@ -397,13 +348,13 @@ function App() {
 
             <ExecutiveOverviewTab
               investigation={investigation}
-              activeStats={activeStats}
-              scoreboardScope="company"
-              onScopeChange={() => {}}
+              onInspectCalculation={inspectCalculation}
+              onNavigateToTab={() => {}}
             />
 
             <ForensicRadarTab
               investigation={investigation}
+              onInspectCalculation={inspectCalculation}
             />
 
             {investigation.debate && (

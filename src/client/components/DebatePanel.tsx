@@ -31,17 +31,17 @@ export const DebatePanel: React.FC<DebatePanelProps> = ({
       <div className="section-heading">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", width: "100%", flexWrap: "wrap", gap: "12px" }}>
           <div>
-            <p className="eyebrow">Stage 05 · Tri-Agent Judicial Debate</p>
-            <h2>Competing Theses, One Critical Diligence Question</h2>
+            <p className="eyebrow">Institutional Dialectic Debate</p>
+            <h2>Competing Bull vs. Bear Theses &amp; Judicial Synthesis</h2>
           </div>
           <div>
             {debate.mode === "ai_grounded" ? (
-              <span className="finding-status-tag pass" title="Evidence-grounded multi-agent debate verified against SEC filings">
+              <span className="finding-status-tag pass" title="Evidence-grounded multi-agent dialectic debate synthesized by AI Judge and mechanically verified against statutory filings">
                 <ActivityIcon size={12} />
-                <span>AI Grounded Mode (Gemini 10-K Constrained)</span>
+                <span>AI Judge Generated · 10-K / BSE Grounded</span>
               </span>
             ) : (
-              <span className="finding-status-tag low" title="Deterministic rule-based arguments constructed directly from audited calculations">
+              <span className="finding-status-tag low" title="Deterministic rule-based arguments constructed directly from audited calculations when AI synthesis is unavailable">
                 <ActivityIcon size={12} />
                 <span>Deterministic Fallback Mode</span>
               </span>
@@ -49,8 +49,8 @@ export const DebatePanel: React.FC<DebatePanelProps> = ({
           </div>
         </div>
         <p>
-          Both Bull and Bear cases are strictly constrained to verified regulatory evidence.
-          The Judge synthesizes the primary unresolved risk question for the investment committee.
+          Both Bull and Bear theses are strictly constrained to verified regulatory evidence from primary filings.
+          The Forensic Judge synthesizes the single most critical unresolved risk question for the investment committee.
         </p>
       </div>
 

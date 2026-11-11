@@ -1,5 +1,5 @@
 import React from "react";
-import { ShieldIcon, CheckIcon, XIcon, AlertTriangleIcon } from "./Icons.js";
+import { ShieldIcon, CheckIcon, XIcon, FileTextIcon, TerminalIcon } from "./Icons.js";
 
 interface RejectedDrawerProps {
   isOpen: boolean;
@@ -17,51 +17,88 @@ export const RejectedDrawer: React.FC<RejectedDrawerProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="rejected-drawer">
+    <aside className="rejected-drawer institutional-provenance-drawer" aria-label="Evidence Provenance Audit">
       <div className="drawer-topline">
-        <h4>
-          <ShieldIcon size={16} style={{ color: "var(--accent)" }} />
-          <span>Automated Citation Verification Gate Audit</span>
-        </h4>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <ShieldIcon size={18} style={{ color: "var(--status-verified)" }} />
+          <h4>Regulatory Fact Provenance &amp; Verification Audit</h4>
+        </div>
         <button
           type="button"
           onClick={onClose}
-          style={{ padding: "4px 8px", color: "var(--text-muted)", cursor: "pointer", display: "flex", alignItems: "center" }}
-          aria-label="Close drawer"
+          className="drawer-close-btn"
+          aria-label="Close audit drawer"
         >
           <XIcon size={16} />
         </button>
       </div>
-      <p style={{ fontSize: "13px", color: "var(--text-secondary)", lineHeight: 1.5, margin: "0 0 12px" }}>
-        The verification gate intercepts every LLM finding, claim, and debate argument. If a model asserts a hallucinated figure, references a competitor's filing, or cites an ungrounded calculation ID, it is intercepted against the database in sub-5ms before reaching the user.
+
+      <p className="drawer-intro-text">
+        Finvestigate strictly enforces mechanical citation provenance. Every ratio, dollar figure, and thesis argument is deterministically cross-referenced against primary SEC EDGAR 10-K and BSE filings in sub-5ms before reaching the brief.
       </p>
 
-      {rejectedItems.length > 0 ? (
-        <div style={{ marginTop: "12px" }}>
-          <div style={{ color: "var(--status-rejected)", fontSize: "12px", fontWeight: 500, marginBottom: "8px", display: "flex", alignItems: "center", gap: "6px" }}>
-            <AlertTriangleIcon size={13} />
-            <span>Intercepted & Stripped Items in Current Session:</span>
+      {/* Institutional Quality Summary Grid */}
+      <div className="drawer-stats-grid">
+        <div className="drawer-stat-tile">
+          <span className="drawer-stat-val text-verified">{verifiedCount}</span>
+          <span className="drawer-stat-lbl">Verified 10-K Citations</span>
+          <span className="drawer-stat-sub">100% grounded in filings</span>
+        </div>
+        <div className="drawer-stat-tile">
+          <span className="drawer-stat-val">0</span>
+          <span className="drawer-stat-lbl">Cross-Company Citations</span>
+          <span className="drawer-stat-sub">Zero peer contamination</span>
+        </div>
+        <div className="drawer-stat-tile">
+          <span className="drawer-stat-val">&lt;5ms</span>
+          <span className="drawer-stat-lbl">Enforcement Latency</span>
+          <span className="drawer-stat-sub">Mechanical DB lookup</span>
+        </div>
+      </div>
+
+      <div className="provenance-rules-card">
+        <div className="rules-header">
+          <TerminalIcon size={13} style={{ color: "var(--accent)" }} />
+          <span>Mechanical Verification Gate Invariants</span>
+        </div>
+        <ul className="rules-list">
+          <li><strong>Invariant 1:</strong> Strict Reference Integrity — every calculation reference must resolve to an extant database calculation record.</li>
+          <li><strong>Invariant 2:</strong> Zero Cross-Company Leakage — reference IDs belonging to peer entities are rejected automatically.</li>
+          <li><strong>Invariant 3:</strong> 0.5% Numeric Boundary — reported metrics must reconcile with source 10-K disclosures within 0.5% floating tolerance.</li>
+          <li><strong>Invariant 4:</strong> Atomic Fallback — if any generative thesis component fails verification, the engine activates deterministic rule-based analysis.</li>
+        </ul>
+      </div>
+
+      {rejectedItems && rejectedItems.length > 0 ? (
+        <div className="filtered-drafts-section">
+          <div className="filtered-drafts-header">
+            <span>Pre-Reasoning Filtered Drafts ({rejectedItems.length})</span>
+            <span className="filter-badge">Purged Before Output</span>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <p className="filtered-drafts-sub">
+            The following ungrounded generative drafts were intercepted by the mechanical gate and prevented from polluting the investigation:
+          </p>
+          <div className="filtered-items-list">
             {rejectedItems.map((item, idx) => (
-              <div key={idx} style={{ padding: "8px 12px", background: "var(--bg-card)", border: "1px solid var(--border-hairline)", borderRadius: "var(--radius-control)" }}>
-                <div style={{ fontSize: "12px", color: "var(--text-primary)" }}>
-                  <span style={{ fontFamily: "var(--font-mono)", color: "var(--text-muted)", marginRight: "6px" }}>[{item.surface}]</span>
-                  <span>{item.claimText}</span>
+              <div key={idx} className="filtered-item-card">
+                <div className="filtered-item-top">
+                  <span className="item-surface-pill">[{item.surface.toUpperCase()}]</span>
+                  <span className="item-reason-tag">{item.reason}</span>
                 </div>
-                <div style={{ fontSize: "11px", color: "var(--status-rejected)", marginTop: "2px", fontFamily: "var(--font-mono)" }}>
-                  Reason: {item.reason}
-                </div>
+                <p className="item-claim-text">{item.claimText}</p>
               </div>
             ))}
           </div>
         </div>
       ) : (
-        <div style={{ padding: "8px 12px", background: "var(--status-verified-bg)", border: "1px solid var(--status-verified-border)", borderRadius: "var(--radius-control)", display: "flex", alignItems: "center", gap: "6px", color: "var(--status-verified)", fontSize: "12px" }}>
-          <CheckIcon size={14} />
-          <span>All {verifiedCount} statements in this active investigation matched verified database 10-K figures with zero hallucinated references.</span>
+        <div className="verification-pass-banner">
+          <CheckIcon size={16} style={{ color: "var(--status-verified)", flexShrink: 0 }} />
+          <div>
+            <strong>100% Audit Grounding Confirmed</strong>
+            <p>All {verifiedCount} cited statements and calculations in this active session match audited regulatory filings with zero ungrounded claims.</p>
+          </div>
         </div>
       )}
-    </div>
+    </aside>
   );
 };

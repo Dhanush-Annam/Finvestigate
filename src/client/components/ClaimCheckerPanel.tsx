@@ -12,10 +12,10 @@ export const ClaimCheckerPanel: React.FC<ClaimCheckerPanelProps> = ({ claimCheck
   return (
     <section className="claim-panel" aria-label="Management Guidance Auditor">
       <div className="section-heading">
-        <p className="eyebrow">Stage 04 · Management Claim Auditor</p>
-        <h2>Executive Guidance vs Reported Result</h2>
+        <p className="eyebrow">Executive Guidance vs. Subsequent Filings Audit</p>
+        <h2>Guidance Commitments vs. Reported 10-K Outcomes</h2>
         <p>
-          Audits past earnings call guidance against subsequent 10-Q and 10-K reported outcomes with deterministic variance analysis.
+          Audits past earnings guidance against subsequent 10-Q and 10-K reported outcomes with deterministic variance analysis.
         </p>
       </div>
 

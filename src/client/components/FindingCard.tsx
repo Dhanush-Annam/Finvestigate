@@ -17,8 +17,8 @@ export const FindingCard: React.FC<FindingCardProps> = ({
   return (
     <section className="dossier-panel" aria-label="Forensic Anomaly Case Files">
       <div className="section-heading">
-        <p className="eyebrow">Stage 02 · Discover · Forensic Case Files</p>
-        <h2>Detailed Divergence Evidence & Rationale</h2>
+        <p className="eyebrow">Detailed Anomaly Case Files</p>
+        <h2>Detailed Divergence Evidence &amp; Diligence Leads</h2>
         <p>
           Every anomaly maps directly to deterministic math in the evidence store with verified source facts.
         </p>

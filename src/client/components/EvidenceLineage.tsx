@@ -82,10 +82,10 @@ export const EvidenceLineage: React.FC<EvidenceLineageProps> = ({
   return (
     <section className="evidence-panel" ref={innerRef as React.RefObject<HTMLElement>} aria-label="Evidence explorer">
       <div className="section-heading">
-        <p className="eyebrow">Stage 04 · Evidence Lineage DAG</p>
-        <h2>Deterministic Calculation Provenance</h2>
+        <p className="eyebrow">Deterministic Calculation Lineage &amp; Provenance</p>
+        <h2>Audited Filing Traceability &amp; Formula Provenance</h2>
         <p>
-          Select any metric to inspect its reported inputs, mathematical formula, and primary regulatory filing accession records.
+          Select any metric to inspect its reported filing inputs, mathematical formula, and primary regulatory filing accession records.
         </p>
       </div>
 
