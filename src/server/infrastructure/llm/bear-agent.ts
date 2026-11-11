@@ -26,7 +26,7 @@ export async function runBearAgentWithDetails(
   const callResult = await callGeminiStructuredJSONWithStats<unknown>(
     BEAR_AGENT_SYSTEM_PROMPT,
     userPrompt,
-    8000,
+    20000,
     overrideModel
   );
 
@@ -83,7 +83,7 @@ Respond with corrected JSON conforming to the exact schema.`;
     const retryResult = await callGeminiStructuredJSONWithStats<unknown>(
       BEAR_AGENT_SYSTEM_PROMPT,
       correctionPrompt,
-      8000,
+      20000,
       overrideModel
     );
 

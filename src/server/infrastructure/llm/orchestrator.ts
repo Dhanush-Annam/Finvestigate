@@ -6,7 +6,7 @@ import { runBullAgent } from "./bull-agent.js";
 import { computeDeterministicStrength } from "./deterministic-scorer.js";
 import { buildEvidencePack } from "./evidence-pack.js";
 import { runJudgeAgent } from "./judge-agent.js";
-import { getGeminiApiKey } from "./provider.js";
+import { getLLMApiKey } from "./provider.js";
 import type { EvidenceRegistry } from "./types.js";
 import { z } from "zod";
 
@@ -56,7 +56,7 @@ export async function generateConstrainedAIDebate(
     };
   };
 
-  const apiKey = getGeminiApiKey();
+  const apiKey = getLLMApiKey();
   if (!apiKey) {
     console.log("[AI Debate Orchestrator] API key not configured. Using deterministic fallback debate.");
     return fallbackDebate();

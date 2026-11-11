@@ -29,7 +29,7 @@ export async function runJudgeAgentWithDetails(
   const callResult = await callGeminiStructuredJSONWithStats<unknown>(
     JUDGE_AGENT_SYSTEM_PROMPT,
     userPrompt,
-    8000,
+    20000,
     overrideModel
   );
 
