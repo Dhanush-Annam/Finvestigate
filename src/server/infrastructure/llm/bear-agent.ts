@@ -68,8 +68,51 @@ export async function runBearAgentWithDetails(
     }
   }
 
+  // 1-Turn Automated Citation Self-Correction Loop
   if (ungroundedRefs.length > 0) {
-    console.warn(`[Bear Agent Registry Rejection] Un-grounded refs: ${ungroundedRefs.join(", ")}`);
+    console.warn(`[Bear Agent Registry Rejection] Un-grounded refs: ${ungroundedRefs.join(", ")}. Initiating 1-turn automated self-correction.`);
+
+    const correctionPrompt = `Citation verification gate rejected your response due to ${ungroundedRefs.length} ungrounded citation reference(s):
+${ungroundedRefs.map((r) => `  - Ref "${r}" does not exist in the Evidence Pack.`).join("\n")}
+
+CRITICAL CORRECTION INSTRUCTION:
+Revise your counter-arguments. You MUST ONLY cite exact reference IDs that exist in the following availableEvidence catalog:
+${JSON.stringify(evidencePack.evidenceCatalog, null, 2)}
+Respond with corrected JSON conforming to the exact schema.`;
+
+    const retryResult = await callGeminiStructuredJSONWithStats<unknown>(
+      BEAR_AGENT_SYSTEM_PROMPT,
+      correctionPrompt,
+      8000,
+      overrideModel
+    );
+
+    if (retryResult.data) {
+      const retryParsed = BearAgentOutputSchema.safeParse(retryResult.data);
+      if (retryParsed.success) {
+        const retryUngrounded: string[] = [];
+        for (const arg of retryParsed.data.arguments) {
+          for (const refId of arg.evidenceRefs) {
+            if (!evidencePack.evidenceRegistry[refId]) {
+              retryUngrounded.push(refId);
+            }
+          }
+        }
+        if (retryUngrounded.length === 0) {
+          console.log("[Bear Agent Self-Correction] Successfully corrected citations on turn 2.");
+          return {
+            output: retryParsed.data,
+            rawJson: retryResult.data,
+            schemaValid: true,
+            grounded: true,
+            ungroundedRefs: [],
+            stats: retryResult.stats,
+            selfCorrected: true,
+          };
+        }
+      }
+    }
+
     return {
       output: null,
       rawJson: callResult.data,
