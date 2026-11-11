@@ -14,6 +14,7 @@
     "start": "npm run build:api && node server-dist/server/api/server.js",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "tsx scripts/verify-prod-e2e.ts",
     "benchmark:llm": "tsx scripts/benchmark.ts"
   },
   "dependencies": {
