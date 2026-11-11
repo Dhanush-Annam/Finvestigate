@@ -1,4 +1,4 @@
-import type { Fact, Calculation, Finding, ClaimCheck, Debate } from "../../shared/types/index.js";
+import type { Fact, Calculation, Finding, ClaimCheck, Debate, ForensicSuiteResult } from "../../shared/types/index.js";
 
 export type VerificationScoreboardData = {
   ticker: string;
@@ -93,6 +93,7 @@ export type InvestigationData = {
   findings: Finding[];
   claimChecks: ClaimCheck[];
   debate?: Debate;
+  forensics?: ForensicSuiteResult;
   peers?: string[];
   isLiveMode?: boolean;
   cachedAt?: string;
