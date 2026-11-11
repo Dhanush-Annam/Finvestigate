@@ -1073,11 +1073,12 @@ html {
 /* Evidence Lineage & Calculation Explorer */
 .evidence-grid {
   display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 20px;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 24px;
+  align-items: flex-start;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 960px) {
   .evidence-grid {
     grid-template-columns: 1fr;
   }
@@ -1086,17 +1087,18 @@ html {
 .calculation-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .calculation-row {
   width: 100%;
   text-align: left;
-  padding: 10px 14px;
+  padding: 12px 14px;
   background: var(--bg-deep);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-control);
   transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  cursor: pointer;
 }
 
 .calculation-row:hover {
@@ -1112,7 +1114,9 @@ html {
   font-size: 13px;
   font-weight: 500;
   color: var(--text-primary);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  line-height: 1.35;
+  word-break: break-word;
 }
 
 .calculation-row .calc-val {
@@ -1126,34 +1130,75 @@ html {
   background: var(--bg-deep);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-card);
-  padding: 20px;
+  padding: 24px;
+  min-width: 0;
+  overflow: hidden;
 }
 
-.lineage-detail-card h3 {
-  font-size: 15px;
-  font-weight: 500;
+.lineage-calc-header {
+  margin-bottom: 18px;
+}
+
+.lineage-calc-header .calc-id-tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 6px;
+  word-break: break-all;
+}
+
+.lineage-calc-header .calc-title {
+  font-size: 18px;
+  font-weight: 600;
   color: var(--text-primary);
-  margin-bottom: 16px;
+  margin: 0;
+  line-height: 1.35;
+  word-break: break-word;
 }
 
 .formula-display {
   background: var(--bg-card);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-control);
-  padding: 12px 16px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+
+.formula-reconciliation-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   font-family: var(--font-mono);
+}
+
+.formula-reconciliation-math {
+  color: var(--accent);
   font-size: 13px;
-  color: var(--text-primary);
-  margin-bottom: 16px;
+  font-weight: 500;
+  font-family: var(--font-mono);
+}
+
+.input-facts-heading {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  font-weight: 500;
 }
 
 .input-facts-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 680px) {
   .input-facts-grid {
     grid-template-columns: 1fr;
   }
@@ -1163,13 +1208,22 @@ html {
   background: var(--bg-card);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-control);
-  padding: 12px 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .fact-label {
   font-size: 11px;
   color: var(--text-muted);
-  margin-bottom: 4px;
+  font-family: var(--font-mono);
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
 }
 
 .fact-value {
@@ -1178,24 +1232,53 @@ html {
   font-weight: 500;
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+}
+
+.fact-value span {
+  color: var(--accent);
 }
 
 .fact-source {
   font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   display: flex;
-  align-items: center;
-  gap: 4px;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.45;
+  margin-bottom: 14px;
 }
 
-.fact-source a {
+.fact-source svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--text-muted);
+}
+
+.fact-source span {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.fact-link-wrapper {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-hairline);
+}
+
+.fact-source-link {
+  font-size: 11px;
   color: var(--accent);
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+  transition: color var(--transition-fast);
 }
 
-.fact-source a:hover {
+.fact-source-link:hover {
   text-decoration: underline;
 }
 
@@ -1606,22 +1689,34 @@ html {
 /* Evidence Lineage 4-node row */
 .lineage-4node-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  margin-bottom: 20px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .lineage-4node-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 540px) {
+  .lineage-4node-grid {
+    grid-template-columns: 1fr;
   }
 }
 
 .lineage-node {
-  padding: 10px 12px;
+  padding: 12px 14px;
   background: var(--bg-card);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-control);
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6px;
 }
 
 .lineage-node.verified {
@@ -1633,7 +1728,9 @@ html {
   font-size: 10px;
   color: var(--text-muted);
   font-family: var(--font-mono);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .node-step-label.verified {
@@ -1645,6 +1742,8 @@ html {
   font-weight: 500;
   color: var(--text-primary);
   font-family: var(--font-mono);
+  min-width: 0;
+  line-height: 1.35;
 }
 
 .node-label.truncatable {
@@ -1652,12 +1751,50 @@ html {
   overflow: hidden;
   text-overflow: ellipsis;
   font-family: inherit;
+  display: block;
+  width: 100%;
 }
 
 .node-sub {
   font-size: 11px;
   color: var(--text-muted);
   font-family: var(--font-mono);
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.node-link {
+  font-size: 11px;
+  color: var(--accent);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: auto;
+  padding-top: 4px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.node-link:hover {
+  text-decoration: underline;
+}
+
+.node-verified-badge {
+  font-size: 11px;
+  color: var(--status-verified);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: auto;
+  padding-top: 4px;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 /* Attack Center pipeline steps */

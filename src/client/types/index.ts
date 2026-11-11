@@ -170,6 +170,18 @@ export const WORKFLOW_STAGES: WorkflowStage[] = [
 
 export const labelFor = (metric: string) =>
   ({
+    revenue: "Revenue",
+    netIncome: "Net income",
+    operatingCashFlow: "Operating cash flow",
+    receivables: "Accounts receivable",
+    capex: "Capital expenditures (CapEx)",
+    assets: "Total assets",
+    liabilities: "Total liabilities",
+    stockholdersEquity: "Stockholders' equity",
+    currentAssets: "Current assets",
+    currentLiabilities: "Current liabilities",
+    ebit: "Operating income (EBIT)",
+    grossProfit: "Gross profit",
     revenue_growth_yoy: "Revenue growth",
     netIncome_growth_yoy: "Net income growth",
     operatingCashFlow_growth_yoy: "Operating cash-flow growth",

@@ -118,25 +118,29 @@ export const EvidenceLineage: React.FC<EvidenceLineageProps> = ({
                 <div className="node-label truncatable" title={inputs[0]?.source || `${company} Filing`}>
                   {inputs[0]?.source || `${company} Filing`}
                 </div>
-                {inputs[0]?.sourceUrl && (
+                {inputs[0]?.sourceUrl ? (
                   <a
                     href={inputs[0].sourceUrl}
                     target="_blank"
                     rel="noreferrer"
-                    style={{ fontSize: "11px", color: "var(--accent)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "3px", marginTop: "4px" }}
+                    className="node-link"
                   >
-                    <span>SEC Document</span>
+                    <span>{inputs[0].sourceUrl.includes("bseindia.com") ? "BSE Document" : "SEC Document"}</span>
                     <ExternalLinkIcon size={11} />
                   </a>
+                ) : (
+                  <span className="node-sub">Audited Filing</span>
                 )}
               </div>
 
               <div className="lineage-node">
                 <div className="node-step-label">02 · Reported Fact</div>
-                <div className="node-label">
+                <div className="node-label" title={inputs[0] ? displayValue(inputs[0].value, inputs[0].unit) : "Reported Fact"}>
                   {inputs[0] ? displayValue(inputs[0].value, inputs[0].unit) : "Reported Fact"}
                 </div>
-                <span className="node-sub">{inputs[0]?.factId || "Fact Node"}</span>
+                <span className="node-sub" title={inputs[0]?.factId || "Fact Node"}>
+                  {inputs[0]?.factId || "Fact Node"}
+                </span>
               </div>
 
               <div className="lineage-node">
@@ -144,7 +148,9 @@ export const EvidenceLineage: React.FC<EvidenceLineageProps> = ({
                 <div className="node-label truncatable" title={detailedLineage?.formulaName || selectedCalculation.formula}>
                   {detailedLineage?.formulaName || selectedCalculation.formula}
                 </div>
-                <span className="node-sub">{selectedCalculation.calcId}</span>
+                <span className="node-sub" title={selectedCalculation.calcId}>
+                  {selectedCalculation.calcId}
+                </span>
               </div>
 
               <div className="lineage-node verified">
@@ -152,54 +158,56 @@ export const EvidenceLineage: React.FC<EvidenceLineageProps> = ({
                 <div className="node-label" style={{ color: "var(--status-verified)" }}>
                   {displayCalculationValue(selectedCalculation)}
                 </div>
-                <div style={{ fontSize: "11px", color: "var(--status-verified)", display: "flex", alignItems: "center", gap: "3px" }}>
+                <div className="node-verified-badge">
                   <CheckIcon size={12} />
                   <span>Ground truth</span>
                 </div>
               </div>
             </div>
 
-            <div style={{ marginBottom: "16px" }}>
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--text-muted)" }}>
+            <div className="lineage-calc-header">
+              <span className="calc-id-tag">
                 Calculation ID: {selectedCalculation.calcId}
               </span>
-              <h3 style={{ fontSize: "18px", fontWeight: 500, color: "var(--text-primary)", margin: "4px 0" }}>
+              <h3 className="calc-title">
                 {labelFor(selectedCalculation.metric)}: {displayCalculationValue(selectedCalculation)}
               </h3>
             </div>
 
             {/* Arithmetic Lineage Breakdown Box */}
             <div className="formula-display">
-              <span style={{ fontSize: "11px", color: "var(--text-muted)", display: "block", marginBottom: "4px" }}>
+              <span className="formula-reconciliation-label">
                 Audited arithmetic reconciliation:
               </span>
-              <span style={{ color: "var(--accent)" }}>{detailedLineage?.mathBreakdown}</span>
+              <span className="formula-reconciliation-math">{detailedLineage?.mathBreakdown}</span>
             </div>
 
-            <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "10px" }}>
+            <div className="input-facts-heading">
               Derived from {inputs.length} reported filing fact{inputs.length === 1 ? "" : "s"}:
             </div>
 
             <div className="input-facts-grid">
               {inputs.map((fact) => (
                 <div className="fact-card" key={fact.factId}>
-                  <div className="fact-label">Fact · {fact.period.label} · {fact.factId}</div>
+                  <div className="fact-label" title={`Fact · ${fact.period.label} · ${fact.factId}`}>
+                    Fact · {fact.period.label} · {fact.factId}
+                  </div>
                   <div className="fact-value">
                     {labelFor(fact.metric)}: <span>{displayValue(fact.value, fact.unit)}</span>
                   </div>
                   <div className="fact-source">
-                    <FileTextIcon size={12} />
+                    <FileTextIcon size={13} />
                     <span>{fact.source}</span>
                   </div>
                   {fact.sourceUrl && (
-                    <div style={{ marginTop: "6px" }}>
+                    <div className="fact-link-wrapper">
                       <a
                         href={fact.sourceUrl}
                         target="_blank"
                         rel="noreferrer"
-                        style={{ fontSize: "11px", color: "var(--accent)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "3px" }}
+                        className="fact-source-link"
                       >
-                        <span>Open SEC Filing</span>
+                        <span>{fact.sourceUrl.includes("bseindia.com") ? "Open BSE Filing" : "Open SEC Filing"}</span>
                         <ExternalLinkIcon size={11} />
                       </a>
                     </div>
