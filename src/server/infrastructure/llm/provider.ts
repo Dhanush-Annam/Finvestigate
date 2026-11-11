@@ -85,9 +85,9 @@ export async function callGeminiStructuredJSONWithStats<T>(
       setTimeout(() => reject(new Error(`LLM API call timed out after ${timeoutMs}ms`)), timeoutMs)
     );
 
-    const callPromise = (async () => {
+    const executeAttempt = async (targetModel: string) => {
       const response = await ai.models.generateContent({
-        model: modelToUse,
+        model: targetModel,
         contents: [
           { role: "user", parts: [{ text: `${systemInstruction}\n\nUSER INPUT:\n${userPrompt}` }] }
         ],
@@ -120,6 +120,25 @@ export async function callGeminiStructuredJSONWithStats<T>(
 
       const parsed = JSON.parse(cleanJsonStr) as T;
       return { data: parsed, stats };
+    };
+
+    const callPromise = (async () => {
+      try {
+        return await executeAttempt(modelToUse);
+      } catch (firstErr: any) {
+        const msg = String(firstErr?.message || firstErr);
+        // If 503 spike or 429 rate limit, attempt fallback model if available
+        if (msg.includes("503") || msg.includes("UNAVAILABLE") || msg.includes("429")) {
+          const altModel = modelToUse === "gemini-3.5-flash-lite" ? "gemini-3.5-flash" : "gemini-3.5-flash-lite";
+          try {
+            console.warn(`[LLM Provider] Model ${modelToUse} returned transient spike. Retrying with fallback model ${altModel}...`);
+            return await executeAttempt(altModel);
+          } catch {
+            throw firstErr;
+          }
+        }
+        throw firstErr;
+      }
     })();
 
     const result = await Promise.race([callPromise, timeoutPromise]);
