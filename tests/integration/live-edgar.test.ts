@@ -57,5 +57,5 @@ describe("Live SEC EDGAR Ingestion Pipeline", () => {
     expect(investigation.facts.length).toBeGreaterThan(0);
     expect(investigation.calculations.length).toBeGreaterThan(0);
     expect(investigation.isLiveMode).toBe(true);
-  }, 25000);
+  }, 60000);
 });

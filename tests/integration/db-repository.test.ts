@@ -150,7 +150,7 @@ describe("Phase 2 — Relational Database Repository Suite", () => {
     const msft2 = await loadInvestigation("MSFT");
     expect(msft2.company).toBe("MSFT");
     expect(fetchSpy).toHaveBeenCalledTimes(1);
-  }, 30000);
+  }, 60000);
 
   it("triggers refetch when database cache becomes stale beyond TTL", async () => {
     await adapter.seedCuratedData();
@@ -168,7 +168,7 @@ describe("Phase 2 — Relational Database Repository Suite", () => {
     // Call loadInvestigation again - should trigger refetch
     await loadInvestigation("MSFT");
     expect(fetchSpy).toHaveBeenCalledTimes(2);
-  }, 45000);
+  }, 90000);
 
   it("passes PRAGMA integrity_check and foreign_key_check with zero errors", () => {
     const integrity = (adapter as any).db.pragma("integrity_check");

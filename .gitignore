@@ -38,6 +38,7 @@ data/*.sqlite3
 # Test databases
 data/test_*.db
 data/test_*.db-*
+data/cache/
 
 # Backup, archive & submission files
 
